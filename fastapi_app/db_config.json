@@ -15,8 +15,8 @@
   "apps": {
     "test_app": {
       "models": [
-        "message_model",
-        "dialogue_model"
+        "api.message_model",
+        "api.dialogue_model"
       ],
       "default_connection": "test_connection"
     }
