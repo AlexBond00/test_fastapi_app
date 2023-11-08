@@ -3,21 +3,22 @@
     "test_connection": {
       "engine": "tortoise.backends.asyncpg",
       "credentials": {
-        "host": "209.250.251.40",
-        "port": "5432",
+        "host": "localhost",
+        "port": "5433",
         "user": "postgres",
-        "password": "hellohello",
-        "database": "postgres",
+        "password": "postgres",
+        "database": "test_db",
         "schema": "public"
       }
     }
   },
   "apps": {
-    "test_app": {
+    "plutus": {
       "models": [
         "api.tortoise_models.message_model",
         "api.tortoise_models.dialogue_model",
-        "api.tortoise_models.bot_model"
+        "api.tortoise_models.bot_model",
+        "api.tortoise_models.model_test"
       ],
       "default_connection": "test_connection"
     }
