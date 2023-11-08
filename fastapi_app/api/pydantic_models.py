@@ -22,3 +22,9 @@ class Message(BaseModel):
 
 class SendMessage(BaseModel):
     message_text: str
+
+
+class Bot(BaseModel):
+    id: int
+    token: str
+    tg_bot_id: int

@@ -19,14 +19,16 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			<input class="searchChats" type="search" placeholder="Search..."/>
 		</header>
 		<div class="chats">
+			{% for chart_id in dialog_list%}
 			<div class="chatButton active">
+
 				<div class="chatInfo">
 				<div class="image my-image">
 				
 				</div>
 				
 				<p class="name">
-					Renan Mayrinck
+					{{chart_id}}
 				</p>
 				
 				<p class="message">Actually, more ...</p>
@@ -41,7 +43,7 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 </svg>
 				</div>
 			</div>
-			
+			{% endfor %}
 			<div class="chatButton">
 				<div class="chatInfo">
 				<div class="image">

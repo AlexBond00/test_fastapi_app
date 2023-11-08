@@ -12,4 +12,4 @@ class MessageModel(Model):
 
     class Meta:
         table = "message"
-        ordering = ['-id']
+        ordering = ['id']
