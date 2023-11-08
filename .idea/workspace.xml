@@ -4,75 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f434ce54-9500-4672-92b0-344329c7f6f7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/fastapi_app/db_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/db_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fastapi_app/frontend/front_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/frontend/front_api.py" afterDir="false" />
-    </list>
+    <list default="true" id="d1cfa64e-fdc0-4bf3-8d2c-def7ba93d5c8" name="Changes" comment="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="main" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProjectId" id="2Xr9p2E2kZzbKElGOrz88XQZXzm" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
-  <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/fastapi_app/frontend" />
-    </key>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="f434ce54-9500-4672-92b0-344329c7f6f7" name="Changes" comment="" />
-      <created>1699376512037</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1699376512037</updated>
-    </task>
-    <task id="LOCAL-00001" summary="update db_config and add fastapi_app_alex">
-      <created>1699377039744</created>
+    <task id="LOCAL-00001" summary="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py">
+      <created>1699448041468</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1699377039744</updated>
+      <updated>1699448041468</updated>
     </task>
-    <task id="LOCAL-00002" summary="update directory">
-      <created>1699428208401</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1699428208401</updated>
-    </task>
-    <option name="localTasksCounter" value="3" />
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -87,9 +39,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="update db_config and add fastapi_app_alex" />
-    <MESSAGE value="update directory" />
-    <option name="LAST_COMMIT_MESSAGE" value="update directory" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
   </component>
 </project>
