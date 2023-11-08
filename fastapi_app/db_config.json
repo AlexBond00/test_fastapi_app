@@ -6,7 +6,7 @@
         "host": "209.250.251.40",
         "port": "5432",
         "user": "postgres",
-        "password": "postgres",
+        "password": "hellohello",
         "database": "postgres",
         "schema": "public"
       }
