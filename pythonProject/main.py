@@ -56,7 +56,7 @@ async def main():
             await message_to_edit.update_from_dict(upd)
             await message_to_edit.save()
 
-    bot = aiogram.Bot(token="6188043261:AAGYFnlrD1WhjK7UIoaa2XP1GZl6qE0dW3g")
+    bot = aiogram.Bot(token="5542728649:AAG0Jx2b7aqfdfGT3LEASJsQN1zduEUBRAw")
 
     await dp.start_polling(bot)
 
