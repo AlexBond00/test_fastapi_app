@@ -4,6 +4,7 @@ import json
 import uvicorn
 from fastapi import FastAPI
 from tortoise import Tortoise
+
 from api.api_router import api_router
 
 

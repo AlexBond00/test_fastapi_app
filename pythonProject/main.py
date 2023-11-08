@@ -4,7 +4,6 @@ import json
 import aiogram
 from tortoise import Tortoise
 
-from dialogue_model import DialogueModel
 from message_middleware import SaveMiddleware
 from message_model import MessageModel
 
