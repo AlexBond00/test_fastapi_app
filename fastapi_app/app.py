@@ -4,12 +4,13 @@ from datetime import datetime
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.responses import Response
 from pydantic import BaseModel
 from tortoise import Tortoise
 
-from dialogue_model import DialogueModel
-from message_model import MessageModel
+from models.dialogue_model import DialogueModel
+from models.message_model import MessageModel
+from frontend.front_api import router
+
 
 
 class Dialogue(BaseModel):
@@ -41,6 +42,8 @@ async def init_tortoise():
 
 
 app = FastAPI()
+
+app.include_router(router)
 
 
 @app.get("/dialogue/", response_model=list[Dialogue])

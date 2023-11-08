@@ -4,13 +4,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-from fastapi_app.message_model import MessageModel
 
-
+from fastapi_app.app import get_dialogue_list
+from fastapi_app.models.dialogue_model import DialogueModel
+from fastapi_app.models.message_model import MessageModel
 
 router = APIRouter()
 
-router.mount("/static", StaticFiles(directory="static", html=True), name="static")
+router.mount("/static", StaticFiles(directory="frontend/static", html=True), name="static")
 
 
 templates = Jinja2Templates(directory="templates")
@@ -18,13 +19,10 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/messages", response_class=HTMLResponse)
 async def read_item(request: Request):
-    records_message: list[MessageModel] = await MessageModel.all()
-    dialog_list = set()
-    for record in records_message:
-        dialog_list.add(record.chat_id)
+    records_message: list[DialogueModel] = await get_dialogue_list()
 
-    print(dialog_list)
-    return templates.TemplateResponse("index.html", {"request": request, "dialog_list": dialog_list})
+    print(records_message)
+    return templates.TemplateResponse("index.html", {"request": request, "dialog_list": records_message})
 
 
 @router.get("/dialog/{chat_id}", response_class=HTMLResponse)
