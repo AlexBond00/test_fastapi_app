@@ -3,11 +3,11 @@
     "test_connection": {
       "engine": "tortoise.backends.asyncpg",
       "credentials": {
-        "host": "209.250.251.40",
-        "port": "5432",
+        "host": "localhost",
+        "port": "5433",
         "user": "postgres",
         "password": "hellohello",
-        "database": "postgres",
+        "database": "test_db",
         "schema": "public"
       }
     }
@@ -15,8 +15,9 @@
   "apps": {
     "test_app": {
       "models": [
-        "message_model",
-        "dialogue_model"
+        "api.tortoise_models.message_model",
+        "api.tortoise_models.dialogue_model",
+        "api.tortoise_models.bot_model"
       ],
       "default_connection": "test_connection"
     }

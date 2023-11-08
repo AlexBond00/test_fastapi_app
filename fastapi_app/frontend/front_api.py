@@ -1,33 +1,44 @@
+from pprint import pprint
+
+import aiohttp
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-
-from fastapi_app.app import get_dialogue_list
-from fastapi_app.models.dialogue_model import DialogueModel
-from fastapi_app.models.message_model import MessageModel
-
 router = APIRouter()
-
-router.mount("/static", StaticFiles(directory="frontend/static", html=True), name="static")
-
 
 templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/messages", response_class=HTMLResponse)
 async def read_item(request: Request):
-    records_message: list[DialogueModel] = await get_dialogue_list()
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://localhost:8080/dialogue') as result:
+            record = await result.json()
+    return templates.TemplateResponse("index.html", {"request": request, "records_dialog": record})
 
-    print(records_message)
-    return templates.TemplateResponse("index.html", {"request": request, "dialog_list": records_message})
 
+@router.get("/dialog/{bot_id}/{chat_id}", response_class=HTMLResponse)
+async def read_item(request: Request, bot_id, chat_id):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'http://localhost:8080/dialogue/{bot_id}/{chat_id}/') as result:
+            records = await result.json()
+    records_list = []
+    import datetime
+    for record in records:
+        is_bot = record.get("json").get("from_user").get("is_bot")
+        text = record.get("json").get("text")
+        date = record.get("created_at")
+        # converting a string to a date object
+        date_time_obj = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+        correct_date = str(date_time_obj.date())
+        correct_time = str(date_time_obj.time())
 
-@router.get("/dialog/{chat_id}", response_class=HTMLResponse)
-async def read_item(request: Request, chat_id):
-    records_message: list[MessageModel] = await MessageModel.filter(chat_id=chat_id).all()
-    print(records_message)
-    return templates.TemplateResponse("chat.html", {"request": request, "records_message": records_message})
+        pprint(record)
+        records_list.append({"is_bot": is_bot, "text": text,
+                             "correct_date": correct_date, "correct_time": correct_time[:5]
+                             })
+    return templates.TemplateResponse("chat.html", {"request": request, "records_list": records_list, "chat_id": chat_id})
 
