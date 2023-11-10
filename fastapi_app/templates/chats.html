@@ -1,0 +1,58 @@
+<div id="test" class="rightPanel">
+		<div class="topBar">
+			<div class="rightSide">
+				<button class="tbButton search">
+					<i class="material-icons">&#xE8B6;</i>
+				</button>
+				<button class="tbButton otherOptions">
+					<i class="material-icons">more_vert</i>
+				</button>
+			</div>
+
+			<div class="leftSide">
+			<p class="chatName">{{ chat_id }}</p>
+
+			</div>
+		</div>
+
+		<div class="convHistory userBg">
+    		{% for record in records_list %}
+        		{% if not record.get("is_bot") %}
+					<div class="msg messageReceived">
+						{{record.get("text")}}
+						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
+						<button type="submit" hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}"
+								hx-target="#rightPanel"
+								value="delete">
+							<i class="material-icons readStatus">delete</i>
+						</button>
+					</div>
+        		{% endif %}
+
+        		{% if record.get("is_bot") %}
+					<div class="msg messageSent">
+						{{record.get("text")}}
+						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
+
+						<button type="submit" hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}"
+								hx-target="#rightPanel"
+								value="delete">
+							<i class="material-icons readStatus">delete</i>
+						</button>
+					</div>
+
+
+        		{% endif %}
+    		{% endfor %}
+		</div>
+		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/SendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
+			<div class="replyBar">
+				<button class="attach">
+					<i  class="material-icons d45">attach_file</i>
+					<input type="file" id="avatar" name="files" multiple/>
+				</button>
+					<input type="text" id="text" name="text" class="replyMessage" placeholder="Type your message..."/>
+					<input type="submit" value="Submit">
+			</div>
+		</form>
+	</div>

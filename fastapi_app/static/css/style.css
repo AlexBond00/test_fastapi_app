@@ -959,3 +959,9 @@ div[class~="onTop"] > .count {
 		width: calc(220px - 20px);
 	}
 }
+
+.modal:target {
+    opacity: 1; /* делаем окно видимым */
+	  pointer-events: auto; /* элемент видим для событий мыши */
+    overflow-y: auto; /* добавляем прокрутку по y, когда элемент не помещается на страницу */
+}

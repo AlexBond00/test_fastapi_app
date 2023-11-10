@@ -4,17 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1cfa64e-fdc0-4bf3-8d2c-def7ba93d5c8" name="Changes" comment="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
+    <list default="true" id="d1cfa64e-fdc0-4bf3-8d2c-def7ba93d5c8" name="Changes" comment="qqq">
+      <change afterPath="$PROJECT_DIR$/fastapi_app/api/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fastapi_app/api/tortoise_models/model_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fastapi_app/templates/dialogues.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fastapi_app/templates/send_message.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/api/api_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/api/api_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/api/pydantic_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/api/pydantic_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/api/tortoise_models/bot_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/api/tortoise_models/bot_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/frontend/front_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/frontend/front_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/templates/chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/templates/chats.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi_app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi_app/templates/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/fastapi_app/api" />
+    </key>
   </component>
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py">
@@ -24,7 +49,14 @@
       <option name="project" value="LOCAL" />
       <updated>1699448041468</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="qqq">
+      <created>1699448382037</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1699448382037</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -40,6 +72,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/anton_dev' into alex_work&#10;&#10;# Conflicts:&#10;#&#9;fastapi_app/api/tortoise_models/dialogue_model.py&#10;#&#9;fastapi_app/api/tortoise_models/message_model.py&#10;#&#9;fastapi_app/app.py&#10;#&#9;fastapi_app/dialogue_model.py&#10;#&#9;fastapi_app/message_model.py&#10;#&#9;fastapi_app/models/dialogue_model.py&#10;#&#9;fastapi_app/models/message_model.py" />
+    <MESSAGE value="qqq" />
+    <option name="LAST_COMMIT_MESSAGE" value="qqq" />
   </component>
 </project>
