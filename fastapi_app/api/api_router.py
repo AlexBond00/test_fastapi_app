@@ -4,6 +4,7 @@ from typing import Annotated
 
 import aiogram
 import pytz
+from fastapi import File
 from fastapi import Form
 from fastapi import UploadFile
 from fastapi.responses import JSONResponse, Response
@@ -68,14 +69,12 @@ async def get_messages(
     return Response(status_code=HTTPStatus.NO_CONTENT)
 
 
-@api_router.post(
-    "/bots/{bot_id}/dialogues/{chat_id}/sendMessage/"
-)
+@api_router.post("/bots/{bot_id}/dialogues/{chat_id}/sendMessage/")
 async def send_message(
         bot_id: int,
         chat_id: int,
         text: Annotated[str | None, Form()] = None,
-        files: list[UploadFile] | None = None,
+        files: Annotated[list[UploadFile], File()] = None,
 ):
     bot_db = await BotModel.get_or_none(uid=bot_id)
     if not bot_db:
@@ -86,7 +85,6 @@ async def send_message(
             content=data,
             status_code=HTTPStatus.NOT_FOUND
         )
-
     dialogue = await DialogueModel.get_or_none(
         chat_id=chat_id,
         bot_id=bot_id
@@ -127,3 +125,4 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
+

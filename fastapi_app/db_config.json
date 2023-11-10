@@ -17,8 +17,7 @@
       "models": [
         "api.tortoise_models.message_model",
         "api.tortoise_models.dialogue_model",
-        "api.tortoise_models.bot_model",
-        "api.tortoise_models.model_test"
+        "api.tortoise_models.bot_model"
       ],
       "default_connection": "test_connection"
     }

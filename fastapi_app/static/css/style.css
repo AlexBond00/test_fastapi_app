@@ -721,7 +721,7 @@ div[class~="onTop"] > .count {
 
 .messageSent > .timestamp, .messageSent > .readStatus {
 	bottom: 10px;
-	right: 40px;
+	right: 10px;
 	color: darkgreen;
 	user-select: none;
 }
@@ -958,4 +958,10 @@ div[class~="onTop"] > .count {
 	.switchMobile {
 		width: calc(220px - 20px);
 	}
+}
+
+.modal:target {
+    opacity: 1; /* делаем окно видимым */
+	  pointer-events: auto; /* элемент видим для событий мыши */
+    overflow-y: auto; /* добавляем прокрутку по y, когда элемент не помещается на страницу */
 }

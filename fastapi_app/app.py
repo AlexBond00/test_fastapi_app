@@ -3,10 +3,11 @@ import json
 
 import uvicorn
 from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 from tortoise import Tortoise
 
 from api.api_router import api_router
-# from frontend.front_api import router
+from frontend.front_api import router
 
 
 async def init_tortoise():
@@ -22,7 +23,8 @@ async def init_tortoise():
 
 app = FastAPI()
 app.include_router(api_router)
-# app.include_router(router)
+app.include_router(router)
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 
 async def main():

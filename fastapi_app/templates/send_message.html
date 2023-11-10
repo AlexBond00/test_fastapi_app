@@ -1,0 +1,10 @@
+<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/SendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
+			<div class="replyBar">
+				<button class="attach">
+					<i  class="material-icons d45">attach_file</i>
+					<input type="file" id="avatar" name="files" multiple/>
+				</button>
+					<input type="text" id="text" name="text" class="replyMessage" placeholder="Type your message..."/>
+					<input type="submit" value="Submit">
+			</div>
+		</form>

@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+	<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+	<title>CodePen - Telegram Web Layout - Material Desktop (WIP)</title>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="{{ url_for('static', path='css/style.css') }}" rel="stylesheet">
+
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
 <!-- 
 Reference image: https://telegram.org/file/811140968/3/UfbcOfXv2YU.118417/b230905e577f9cc2de 
 
@@ -18,56 +34,29 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			
 			<input class="searchChats" type="search" placeholder="Search..."/>
 		</header>
-		<div class="chats">
-			{% for chart_id in dialog_list%}
+		<div class="chats" id="chats">
+			{% for bot in bots %}
+			<button type="submit" hx-get="/bots/{{bot.uid}}/" hx-target="#chats">
 			<div class="chatButton active">
-
 				<div class="chatInfo">
-				<div class="image my-image">
-				
-				</div>
-				
+<!---->
 				<p class="name">
-					{{chart_id}}
+					{{bot.title}}
 				</p>
-				
+
 				<p class="message">Actually, more ...</p>
 				</div>
-				
+
 				<div class="status onTop">
 					<p class="date">00:02</p>
-					<p class="count">10</p>
-					<i class="material-icons read">done_all</i>
-					<svg class="fixed" viewBox="0 0 24 24">
-    <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" />
-</svg>
 				</div>
 			</div>
+			</button>
 			{% endfor %}
-			<div class="chatButton">
-				<div class="chatInfo">
-				<div class="image">
-				
-				</div>
-				
-				<p class="name">
-					Doge
-				</p>
-				
-				<p class="message">Wow!</p>
-				</div>
-				
-				<div class="status normal">
-					<p class="date">Now</p>
-					<p class="count">42</p>
-					<i class="material-icons read">done_all</i>
-					<i class="material-icons fixed">loyalty</i>
-				</div>
-			</div>
 		</div>
 	</div>
 	
-	<div class="rightPanel">
+	<div id="rightPanel" class="rightPanel">
 		<div class="topBar">
 			<div class="rightSide">
 				<button class="tbButton search">
@@ -79,8 +68,8 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			</div>
 			
 			<div class="leftSide">
-			<p class="chatName">Renan Mayrinck <span>@Grisson</span></p>
-			<p class="chatStatus">Online</p>
+			<p class="chatName">Renan Mayrinck</p>
+
 			</div>
 		</div>
 		
@@ -94,7 +83,6 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			
 			<div class="msg messageSent">
 				Dunno...
-				<i class="material-icons readStatus">done_all</i>
 				<span class="timestamp">00:01</span>
 			</div>
 			
@@ -110,14 +98,15 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			
 			<div class="msg messageSent">
 				Actually, more than 2000 people did this.
-				<i class="material-icons readStatus">done</i>
 				<span class="timestamp">00:04</span>
 			</div>
 		</div>
 		
 		<div class="replyBar">
 			<button class="attach">
-				<i class="material-icons d45">attach_file</i>
+				<input id="file-input" type="file" name="file" multiple>
+               <label class="material-icons d45" for="file-input">attach_file</label>
+
 			</button>
 			
 			<input type="text" class="replyMessage" placeholder="Type your message..."/>
@@ -127,26 +116,6 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 				<button id="panelEmoji">Emoji</button>
 				<button id="panelStickers">Stickers</button>
 				<button id="panelGIFs">GIFs</button>
-				</div>
-				
-				
-				<!-- Emoji panel -->
-<!--				<div class=class"emojiList">-->
-<!--					<button id="smileface" class="pick">-->
-<!--				</button>-->
-<!--					<button id="grinningface" class="pick"></button>-->
-<!--					<button id="tearjoyface" class="pick"></button>-->
-<!--					<button id="rofl" class="pick"></button>-->
-<!--					<button id="somface" class="pick"></button>-->
-<!--					<button id="swfface" class="pick"></button>-->
-<!--				</div>-->
-<!--				-->
-				<!-- the best part of telegram ever: STICKERS!! -->
-				<div class="stickerList">
-					<button id="smileface" class="pick">
-				</button>
-					<button id="grinningface" class="pick"></button>
-					<button id="tearjoyface" class="pick"></button>
 				</div>
 			</div>
 			
@@ -344,3 +313,8 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 <div class="alerts">
 	Trying to reconnect... 
 </div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script><script  src="static/js/script.js"></script>
+
+</body>
+</html>

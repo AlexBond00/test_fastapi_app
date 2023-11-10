@@ -1,8 +1,7 @@
 from typing import Final
 
-from aiogram import Bot
 
-__DEFAULT_LIMIT: Final[int] = 10
+__DEFAULT_LIMIT: Final[int] = 20
 
 __DEFAULT_OFFSET: Final[int] = 0
 

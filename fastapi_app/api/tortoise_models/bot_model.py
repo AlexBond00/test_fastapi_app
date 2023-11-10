@@ -8,16 +8,6 @@ class BotModel(Model):
     token = fields.CharField(max_length=128)
     created_at = fields.DatetimeField(auto_now_add=True)
 
-    rel = fields.ForeignKeyField(
-        "plutus.ModelTest",
-        on_delete=fields.SET_NULL,
-        null=True
-    )
-
-    # dialog = fields.ForeignKeyField("plutus.Dialogue", on_delete=fields.SET_NULL, null=True)
-    #
-    # vars = fields.ManyToManyField("plutus.Var", through="bot_vars")
-
     def __str__(self):
         return self.title
 
