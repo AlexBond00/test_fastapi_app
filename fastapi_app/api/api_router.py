@@ -1,16 +1,20 @@
 import datetime
 from http import HTTPStatus
+from typing import Annotated
 
 import aiogram
 import pytz
+from fastapi import Form
+from fastapi import UploadFile
 from fastapi.responses import JSONResponse, Response
 from fastapi.routing import APIRouter
 
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
-from .pydantic_models import Dialogue, SendMessage, Message, Bot
+from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
+from .utils.message_sender import message_sender
 
 api_router = APIRouter()
 
@@ -65,37 +69,61 @@ async def get_messages(
 
 
 @api_router.post(
-    "/bots/{bot_id}/dialogues/{chat_id}/SendMessage/",
-    response_model=SendMessage)
+    "/bots/{bot_id}/dialogues/{chat_id}/sendMessage/"
+)
 async def send_message(
         bot_id: int,
         chat_id: int,
-        message_text: SendMessage
-) -> SendMessage | JSONResponse:
+        text: Annotated[str | None, Form()] = None,
+        files: list[UploadFile] | None = None,
+):
     bot_db = await BotModel.get_or_none(uid=bot_id)
-    dialogue = await DialogueModel.get_or_none(
-        chat_id=chat_id,
-        bot_id=bot_id
-    )
-    if not bot_db or not dialogue:
+    if not bot_db:
         data = {
-            "error_message": f"There is no bot with id {bot_id} or "
-                             f"bot chat with id {chat_id}"
+            "error_message": f"There is no bot with id {bot_id}"
         }
         return JSONResponse(
             content=data,
             status_code=HTTPStatus.NOT_FOUND
         )
 
-    aio_bot = aiogram.Bot(token=bot_db.token)
-    async with aio_bot.context():
-        await aio_bot.send_message(
-            chat_id=chat_id,
-            text=message_text.message_text
-        )
-    await dialogue.update_from_dict(
-        {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
+    dialogue = await DialogueModel.get_or_none(
+        chat_id=chat_id,
+        bot_id=bot_id
     )
-    await dialogue.save()
+    if not dialogue:
+        data = {
+            "error_message": f"There is no bot chat with user id {chat_id}"
+        }
+        return JSONResponse(
+            content=data,
+            status_code=HTTPStatus.NOT_FOUND
+        )
+    aio_bot = aiogram.Bot(token=bot_db.token)
+    sent_messages = []
 
-    return message_text
+    if text:
+        sent_messages.append(await aio_bot.send_message(
+            chat_id=chat_id,
+            text=text
+        )
+                             )
+    if files:
+        sent_messages.extend(
+            [
+                await message_sender(file, aio_bot, chat_id) for file in files
+            ]
+        )
+    for sent_message in sent_messages:
+        json_str = sent_message.model_dump_json()
+        await MessageModel.create(
+            chat_id=sent_message.chat.id,
+            bot_id=sent_message.bot.id,
+            json=json_str,
+            message_id=sent_message.message_id
+        )
+
+    await dialogue.update_from_dict(
+            {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
+        )
+    await dialogue.save()

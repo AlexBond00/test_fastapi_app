@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from pydantic import BaseModel
+from fastapi import UploadFile
+from typing import Annotated
 
 
 class Dialogue(BaseModel):
@@ -15,10 +17,6 @@ class Message(BaseModel):
     chat_id: int
     json: dict
     created_at: datetime
-
-
-class SendMessage(BaseModel):
-    message_text: str
 
 
 class Bot(BaseModel):
