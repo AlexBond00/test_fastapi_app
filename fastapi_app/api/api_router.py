@@ -7,7 +7,7 @@ import pytz
 from fastapi import File
 from fastapi import Form
 from fastapi import UploadFile
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, Response, RedirectResponse
 from fastapi.routing import APIRouter
 
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
@@ -15,7 +15,8 @@ from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
-from .utils.message_sender import message_sender
+from .utils.message_saver import save_message
+from .utils.senders import file_sender
 
 api_router = APIRouter()
 
@@ -33,7 +34,9 @@ async def get_bots(
     return Response(status_code=HTTPStatus.NO_CONTENT)
 
 
-@api_router.get("/bots/{bot_id}/dialogues/", response_model=list[Dialogue])
+@api_router.get(
+    "/bots/{bot_id}/dialogues/", response_model=list[Dialogue]
+)
 async def get_dialogue_list(
         bot_id: int,
         offset: int = __DEFAULT_OFFSET,
@@ -98,31 +101,22 @@ async def send_message(
             status_code=HTTPStatus.NOT_FOUND
         )
     aio_bot = aiogram.Bot(token=bot_db.token)
-    sent_messages = []
 
     if text:
-        sent_messages.append(await aio_bot.send_message(
+        message = await aio_bot.send_message(
             chat_id=chat_id,
             text=text
         )
-                             )
+        await save_message(message)
+
     if files:
-        sent_messages.extend(
-            [
-                await message_sender(file, aio_bot, chat_id) for file in files
-            ]
-        )
-    for sent_message in sent_messages:
-        json_str = sent_message.model_dump_json()
-        await MessageModel.create(
-            chat_id=sent_message.chat.id,
-            bot_id=sent_message.bot.id,
-            json=json_str,
-            message_id=sent_message.message_id
-        )
+        try:
+            await file_sender(aio_bot, chat_id, files)
+        except Exception as e:
+            pass
 
     await dialogue.update_from_dict(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-
+    return RedirectResponse(f"/{bot_id}/{chat_id}/")
