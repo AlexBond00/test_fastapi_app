@@ -7,7 +7,7 @@ import pytz
 from fastapi import File
 from fastapi import Form
 from fastapi import UploadFile
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import Response, RedirectResponse
 from fastapi.routing import APIRouter
 
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
@@ -16,7 +16,7 @@ from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
 from .utils.message_sender import message_sender
-
+from fastapi.responses import JSONResponse
 api_router = APIRouter()
 
 
@@ -61,7 +61,7 @@ async def get_messages(
     messages: list[MessageModel] = await MessageModel.filter(
         chat_id=chat_id,
         bot_id=bot_id
-    ).all().offset(offset).limit(limit)
+    ).all()
 
     if messages:
         return messages
@@ -76,7 +76,7 @@ async def send_message(
         text: Annotated[str | None, Form()] = None,
         files: Annotated[list[UploadFile], File()] = None,
 ):
-    bot_db = await BotModel.get_or_none(uid=bot_id)
+    bot_db = await BotModel.filter(uid=bot_id).first()
     if not bot_db:
         data = {
             "error_message": f"There is no bot with id {bot_id}"
@@ -125,4 +125,5 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
+    return RedirectResponse(f"/{bot_id}/{chat_id}/")
 

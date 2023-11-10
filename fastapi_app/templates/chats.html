@@ -45,14 +45,25 @@
         		{% endif %}
     		{% endfor %}
 		</div>
-		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/SendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
+		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
 			<div class="replyBar">
 				<button class="attach">
-					<i  class="material-icons d45">attach_file</i>
+<!--					<i  class="material-icons d45" >attach_file</i>-->
 					<input type="file" id="avatar" name="files" multiple/>
 				</button>
-					<input type="text" id="text" name="text" class="replyMessage" placeholder="Type your message..."/>
-					<input type="submit" value="Submit">
+					<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
 			</div>
 		</form>
+		<script>
+			function submitOnEnter(event) {
+				if (event.which === 13 && !event.shiftKey) {
+					if (!event.repeat) {
+						const newEvent = new Event("submit", {cancelable: true});
+						event.target.form.dispatchEvent(newEvent);
+					}
+					event.preventDefault();
+				}
+			}
+			document.getElementById("text").addEventListener("keydown", submitOnEnter);
+		</script>
 	</div>

@@ -8,5 +8,5 @@ class DialogueModel(Model):
     updated_at = fields.DatetimeField()
 
     class Meta:
-        table = "bot_dialogue"
-        orderindg = ['-updated_at']
+        table = "dialogue"
+        ordering = ['-updated_at']
