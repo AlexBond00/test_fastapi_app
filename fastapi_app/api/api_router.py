@@ -76,7 +76,7 @@ async def get_messages(
 async def send_message(
         bot_id: int,
         chat_id: int,
-        text: Annotated[str | None, Form()] = None,
+        text: str | None = None,
         files: Annotated[list[UploadFile], File()] = None,
 ):
     bot_db = await BotModel.get_or_none(uid=bot_id)
