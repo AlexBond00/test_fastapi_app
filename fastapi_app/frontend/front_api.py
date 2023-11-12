@@ -1,15 +1,16 @@
-
 from pprint import pprint
 import datetime
 from typing import Annotated
 
 import aiohttp
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse, JSONResponse
+
+from fastapi_app.frontend.user_token_verify import validate_user_token
 
 
 class SendMessage(BaseModel):
@@ -22,7 +23,9 @@ templates = Jinja2Templates(directory="templates")
 
 
 @router.post("/messages", response_class=HTMLResponse)
-async def get_dialogue(request: Request):
+async def get_dialogue(request: Request,
+                       user_token: Annotated[dict, Depends(validate_user_token)]
+                       ):
     async with aiohttp.ClientSession() as session:
         async with session.get('http://localhost:8888/bots') as result:
             bots = await result.json()
@@ -31,7 +34,10 @@ async def get_dialogue(request: Request):
 
 
 @router.get("/bots/{bot_id}/")
-async def get_dialogue_list(request: Request, bot_id):
+async def get_dialogue_list(request: Request,
+                            bot_id,
+                            user_token: Annotated[dict, Depends(validate_user_token)]
+                            ):
     async with aiohttp.ClientSession() as session:
         async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/') as result:
             dialogues = await result.json()
@@ -40,7 +46,11 @@ async def get_dialogue_list(request: Request, bot_id):
 
 
 @router.get("/dialog/{bot_id}/{chat_id}", response_class=HTMLResponse)
-async def choose_dialogue(request: Request, bot_id, chat_id):
+async def choose_dialogue(request: Request,
+                          bot_id,
+                          chat_id,
+                          user_token: Annotated[dict, Depends(validate_user_token)]
+                          ):
     records_list: list = []
 
     async with aiohttp.ClientSession() as session:
@@ -66,14 +76,18 @@ async def choose_dialogue(request: Request, bot_id, chat_id):
 @router.post("/{bot_id}/{chat_id}/")
 async def send_message(request: Request,
                        bot_id,
-                       chat_id
+                       chat_id,
+                       user_token: Annotated[dict, Depends(validate_user_token)]
                        ):
     return templates.TemplateResponse("send_message.html", {"request": request, "chat_id": chat_id, "bot_id": bot_id})
 
 
 @router.get("/delete_message/{bot_id}/{chat_id}/{message_id}", response_class=HTMLResponse)
-async def delete_message(request: Request, bot_id, chat_id):
-
+async def delete_message(request: Request,
+                         bot_id,
+                         chat_id,
+                         user_token: Annotated[dict, Depends(validate_user_token)]
+                         ):
     records_list: list = []
     async with aiohttp.ClientSession() as session:
         async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
@@ -109,4 +123,3 @@ def verification(user_token: str = Form(default=None)):
         return RedirectResponse("/messages")
     else:
         return "Токен неверный"
-

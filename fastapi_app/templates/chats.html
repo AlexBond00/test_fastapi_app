@@ -18,7 +18,7 @@
 		<div class="convHistory userBg">
     		{% for record in records_list %}
         		{% if not record.get("is_bot") %}
-					<div class="msg messageReceived">
+					<div class="msg messageReceived" style="white-space: pre-wrap">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
 						<button type="submit" hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}"
@@ -30,7 +30,7 @@
         		{% endif %}
 
         		{% if record.get("is_bot") %}
-					<div class="msg messageSent">
+					<div class="msg messageSent" style="white-space: pre-wrap">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
 
