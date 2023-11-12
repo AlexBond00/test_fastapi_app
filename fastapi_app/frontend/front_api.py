@@ -1,4 +1,3 @@
-from pprint import pprint
 import datetime
 from typing import Annotated
 
@@ -6,16 +5,9 @@ import aiohttp
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
-from pydantic import BaseModel
 from starlette.responses import RedirectResponse, JSONResponse
 
-from fastapi_app.frontend.user_token_verify import validate_user_token
-
-
-class SendMessage(BaseModel):
-    message_text: str
-
+from .user_token_verify import validate_user_token
 
 router = APIRouter()
 

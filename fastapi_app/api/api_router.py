@@ -31,7 +31,7 @@ async def get_bots(
     if bots:
         return bots
 
-    return Response(status_code=HTTPStatus.NO_CONTENT)
+    return Response(status_code=HTTPStatus.NOT_FOUND)
 
 
 @api_router.get(
@@ -49,7 +49,7 @@ async def get_dialogue_list(
     if dialogues:
         return dialogues
 
-    return Response(status_code=HTTPStatus.NO_CONTENT)
+    return Response(status_code=HTTPStatus.NOT_FOUND)
 
 
 @api_router.get(
@@ -69,7 +69,7 @@ async def get_messages(
     if messages:
         return messages
 
-    return Response(status_code=HTTPStatus.NO_CONTENT)
+    return Response(status_code=HTTPStatus.NOT_FOUND)
 
 
 @api_router.post("/bots/{bot_id}/dialogues/{chat_id}/sendMessage/")
@@ -120,3 +120,39 @@ async def send_message(
         )
     await dialogue.save()
     return RedirectResponse(f"/{bot_id}/{chat_id}/")
+
+
+@api_router.delete(
+    "/bots/{bot_id}/dialogues/{chat_id}/{message_id}/deleteMessage")
+async def delete_message(
+        bot_id: int,
+        chat_id: int,
+        message_id: int
+):
+    message = await MessageModel.get_or_none(
+        chat_id=chat_id, bot_id=bot_id, message_id=message_id)
+    if not message:
+        data = {
+            "error_message": f"There is no such message you want to delete."
+        }
+        return JSONResponse(content=data, status_code=HTTPStatus.NOT_FOUND)
+
+    bot = await BotModel.get(uid=bot_id)
+    if not bot:
+        data = {
+            "error_message": f"There is no such bot with "
+                             f"uid {bot_id} in your DB."
+        }
+        return JSONResponse(content=data, status_code=HTTPStatus.BAD_REQUEST)
+
+    aio_bot = aiogram.Bot(token=bot.token)
+    async with aio_bot.context():
+        status = await aio_bot.delete_message(
+            chat_id=chat_id, message_id=message_id
+        )
+    if not status:
+        return Response(status_code=HTTPStatus.BAD_REQUEST)
+
+    await message.delete()
+    await message.save()
+    return Response(status_code=HTTPStatus.NO_CONTENT)
