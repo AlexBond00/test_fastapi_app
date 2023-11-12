@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verification</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div class="container">
+        <form action="/verification_info" method="post">
+            <h2>Authentication</h2>
+            <input type="text" name="user_token" placeholder="Username" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <style>
+            body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 100px auto;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+    </style>
+
+</body>
+</html>

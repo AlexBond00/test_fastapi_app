@@ -7,7 +7,7 @@ import pytz
 from fastapi import File
 from fastapi import Form
 from fastapi import UploadFile
-from fastapi.responses import JSONResponse, Response, RedirectResponse
+from fastapi.responses import Response, RedirectResponse, JSONResponse
 from fastapi.routing import APIRouter
 
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
@@ -76,10 +76,10 @@ async def get_messages(
 async def send_message(
         bot_id: int,
         chat_id: int,
-        text: str | None = None,
+        text: Annotated[str | None, Form()] = None,
         files: Annotated[list[UploadFile], File()] = None,
 ):
-    bot_db = await BotModel.get_or_none(uid=bot_id)
+    bot_db = await BotModel.filter(uid=bot_id).first()
     if not bot_db:
         data = {
             "error_message": f"There is no bot with id {bot_id}"
