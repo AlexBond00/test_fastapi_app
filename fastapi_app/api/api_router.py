@@ -15,8 +15,7 @@ from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
-from .utils.message_saver import save_message
-from .utils.senders import file_sender
+from .utils.senders import message_sender
 
 api_router = APIRouter()
 
@@ -53,7 +52,8 @@ async def get_dialogue_list(
 
 
 @api_router.get(
-    "/bots/{bot_id}/dialogues/{chat_id}/messages/", response_model=list[Message]
+    "/bots/{bot_id}/dialogues/{chat_id}/messages/",
+    response_model=list[Message]
 )
 async def get_messages(
         chat_id: int,
@@ -102,18 +102,10 @@ async def send_message(
         )
     aio_bot = aiogram.Bot(token=bot_db.token)
 
-    if text:
-        message = await aio_bot.send_message(
-            chat_id=chat_id,
-            text=text
-        )
-        await save_message(message)
-
-    if files:
-        try:
-            await file_sender(aio_bot, chat_id, files)
-        except Exception as e:
-            print(e)
+    try:
+        await message_sender(aio_bot, chat_id, text, files)
+    except Exception as e:
+        pass
 
     await dialogue.update_from_dict(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
