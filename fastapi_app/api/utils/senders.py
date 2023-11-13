@@ -6,8 +6,8 @@ from aiogram.types import BufferedInputFile, InputMediaDocument
 from fastapi import UploadFile
 
 from ..config import __TYPE_ACTIONS
-from ..utils.file_saver import save_file
-from ..utils.message_saver import save_message
+from ..utils.file_saver import save_file, bulk_save_file
+from ..utils.message_saver import save_message, bulk_save_message
 
 
 async def send_media_as_group(
@@ -16,7 +16,7 @@ async def send_media_as_group(
         chat_id: int,
         builder=InputMediaDocument,
         text: str = None
-):
+) -> list[aiogram.types.Message]:
     """Build media group and send it."""
     media_group = []
     for file in group:
@@ -27,7 +27,8 @@ async def send_media_as_group(
         if text:
             text = None
     async with aio_bot.context():
-        await aio_bot.send_media_group(chat_id, media=media_group)
+        messages = await aio_bot.send_media_group(chat_id, media=media_group)
+        return messages
 
 
 async def build_media_groups(files: list[UploadFile]) -> dict:
@@ -117,10 +118,14 @@ async def message_sender(
                     group_name).get("aio_file_builder")
                 try:
                     async with aio_bot.context():
-                        message = await send_media_as_group(
+                        messages = await send_media_as_group(
                             group_values, aio_bot, chat_id, builder, text
                         )
+                        msg_list = await bulk_save_message(messages)
+                        zipped = dict(zip(msg_list, group_values))
+                        await bulk_save_file(zipped)
                 except (TelegramBadRequest, TelegramServerError) as e:
+                    print(e)
                     continue
                 finally:
                     text = None

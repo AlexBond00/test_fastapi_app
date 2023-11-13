@@ -6,6 +6,7 @@ from aiogram.types import Message
 
 from dialogue_model import DialogueModel
 from message_model import MessageModel
+from utils.download_file import download_file
 
 
 class SaveMiddleware(BaseMiddleware):
@@ -31,4 +32,7 @@ class SaveMiddleware(BaseMiddleware):
             json=json_str,
             message_id=event.message_id
         )
+        # Check if there are files in update
+        # and download them on server if succeeded
+        await download_file(event)
         return await handler(event, data)
