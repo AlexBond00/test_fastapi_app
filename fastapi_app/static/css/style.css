@@ -481,7 +481,7 @@ header {
 
 .chatButton {
 	float: left;
-	width: 100%;
+	width: 320px;
 	height: 80px;
 	background: #FFF;
 	color: #555;
@@ -722,7 +722,6 @@ div[class~="onTop"] > .count {
 .messageSent > .timestamp, .messageSent > .readStatus {
 	bottom: 10px;
 	right: 10px;
-	color: darkgreen;
 	user-select: none;
 }
 
@@ -745,7 +744,7 @@ div[class~="onTop"] > .count {
 .replyBar .attach {
 	width: 70px;
 	height: 70px;
-  color: #777;
+    color: #777;
 	background: #FFF;
 	float: left;
 }

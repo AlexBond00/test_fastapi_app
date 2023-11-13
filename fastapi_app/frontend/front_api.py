@@ -10,7 +10,8 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse, JSONResponse
 
-from fastapi_app.frontend.user_token_verify import validate_user_token
+from .response_parsing import response_parsing
+from .user_token_verify import validate_user_token
 
 
 class SendMessage(BaseModel):
@@ -51,24 +52,12 @@ async def choose_dialogue(request: Request,
                           chat_id,
                           user_token: Annotated[dict, Depends(validate_user_token)]
                           ):
-    records_list: list = []
-
     async with aiohttp.ClientSession() as session:
         async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
             records = await result.json()
-    for record in records:
-        is_bot = record.get("json").get("from_user").get("is_bot")
-        text = record.get("json").get("text")
-        date = record.get("created_at")
-        message_id = record.get("message_id")
-        # converting a string to a date object
-        date_time_obj = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
-        correct_date = str(date_time_obj.date())
-        correct_time = str(date_time_obj.time())
 
-        records_list.append({"is_bot": is_bot, "text": text,
-                             "correct_date": correct_date, "correct_time": correct_time[:5],
-                             "message_id": message_id})
+    records_list = await response_parsing(records)
+
     return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
                                                      "chat_id": chat_id, "bot_id": bot_id})
 
@@ -79,7 +68,14 @@ async def send_message(request: Request,
                        chat_id,
                        user_token: Annotated[dict, Depends(validate_user_token)]
                        ):
-    return templates.TemplateResponse("send_message.html", {"request": request, "chat_id": chat_id, "bot_id": bot_id})
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
+            records = await result.json()
+
+    records_list = await response_parsing(records)
+
+    return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
+                                                     "chat_id": chat_id, "bot_id": bot_id})
 
 
 @router.get("/delete_message/{bot_id}/{chat_id}/{message_id}", response_class=HTMLResponse)
@@ -88,23 +84,12 @@ async def delete_message(request: Request,
                          chat_id,
                          user_token: Annotated[dict, Depends(validate_user_token)]
                          ):
-    records_list: list = []
     async with aiohttp.ClientSession() as session:
         async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
             records = await result.json()
-    for record in records:
-        is_bot = record.get("json").get("from_user").get("is_bot")
-        text = record.get("json").get("text")
-        date = record.get("created_at")
-        message_id = record.get("message_id")
-        # converting a string to a date object
-        date_time_obj = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
-        correct_date = str(date_time_obj.date())
-        correct_time = str(date_time_obj.time())
 
-        records_list.append({"is_bot": is_bot, "text": text,
-                             "correct_date": correct_date, "correct_time": correct_time[:5],
-                             "message_id": message_id})
+    records_list = await response_parsing(records)
+
     return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
                                                      "chat_id": chat_id, "bot_id": bot_id})
 

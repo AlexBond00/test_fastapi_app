@@ -1,4 +1,19 @@
-<div id="test" class="rightPanel">
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+	<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+	<title>CodePen - Telegram Web Layout - Material Desktop (WIP)</title>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="{{ url_for('static', path='css/style.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div id="test" class="rightPanel" style="width:100%;">
 		<div class="topBar">
 			<div class="rightSide">
 				<button class="tbButton search">
@@ -14,30 +29,44 @@
 
 			</div>
 		</div>
-
+		<style>
+			.delete {
+				  width: 24px;
+				  height: 24px;
+				  border: none;
+				  background-image: url('static/image/delete.png');
+				  background-size: cover;
+			}
+			.file {
+				width: 0.1px;
+  				height: 0.1px;
+				opacity: 0;
+			}
+		</style>
 		<div class="convHistory userBg">
     		{% for record in records_list %}
         		{% if not record.get("is_bot") %}
-					<div class="msg messageReceived" style="white-space: pre-wrap">
+					<div class="msg messageReceived" style="white-space: pre-line;">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
-						<button type="submit" hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}"
+						<button class="delete"
+								type="submit"
+								value="delete"
 								hx-target="#rightPanel"
-								value="delete">
-							<i class="material-icons readStatus">delete</i>
+								hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}">
 						</button>
 					</div>
         		{% endif %}
 
         		{% if record.get("is_bot") %}
-					<div class="msg messageSent" style="white-space: pre-wrap">
+					<div class="msg messageSent" style="white-space: pre-line;">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
-
-						<button type="submit" hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}"
+						<button class="delete"
+								type="submit"
+								value="delete"
 								hx-target="#rightPanel"
-								value="delete">
-							<i class="material-icons readStatus">delete</i>
+								hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}">
 						</button>
 					</div>
 
@@ -45,25 +74,27 @@
         		{% endif %}
     		{% endfor %}
 		</div>
-		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
+		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="#rightPanel" enctype="multipart/form-data" id="myForm">
+
 			<div class="replyBar">
-				<button class="attach">
-<!--					<i  class="material-icons d45" >attach_file</i>-->
-					<input type="file" id="avatar" name="files" multiple/>
-				</button>
-					<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
+				<div class="attach">
+					<label for="avatar">
+						<img src="static/image/paper_clip.png" width="70" height="70" alt="add file" style="margin:0;">
+					</label>
+					<input type="file" id="avatar" name="files" class="file" multiple/>
+				</div>
+				<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
 			</div>
 		</form>
 		<script>
-			function submitOnEnter(event) {
-				if (event.which === 13 && !event.shiftKey) {
-					if (!event.repeat) {
-						const newEvent = new Event("submit", {cancelable: true});
-						event.target.form.dispatchEvent(newEvent);
-					}
-					event.preventDefault();
-				}
+			function inverseScroll() {
+			let scrollPosition = document.documentElement.scrollTop;
+			window.scrollTo({
+			top: scrollPosition - window.innerHeight,
+			behavior: 'smooth'
+			  });
 			}
-			document.getElementById("text").addEventListener("keydown", submitOnEnter);
+			window.addEventListener('scroll', inverseScroll);
 		</script>
 	</div>
+</body>
