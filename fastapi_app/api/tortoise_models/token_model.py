@@ -1,8 +1,7 @@
 import datetime
+import uuid
 
 from tortoise import Model, fields
-import uuid
-from ..config import __TOKEN_DAY_EXPIRE
 
 
 class Token(Model):
