@@ -1,15 +1,12 @@
-from typing import Annotated
-
 import aiohttp
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, JSONResponse
-
+from typing import Annotated
 
 from .response_parsing import response_parsing
 from .user_token_verify import validate_user_token
-
 
 router = APIRouter()
 
