@@ -28,7 +28,7 @@ __TYPES: Final[dict] = {
 
 __ROOT_PATH: Final[Path] = Path(__file__).parent.parent
 
-__MEDIA_PATH: Final[Path] = __ROOT_PATH / 'media'
+__MEDIA_PATH: Final[Path] = __ROOT_PATH / 'static/media'
 
 # How many days token stays valid before recreation
 __TOKEN_DAY_EXPIRE: Final[int] = 7

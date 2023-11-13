@@ -54,7 +54,13 @@
 
         		{% if record.get("is_bot") %}
 					<div class="msg messageSent" style="white-space: pre-line;">
-						{{record.get("text")}}
+						{% if record.get("file_path") %}
+							<img src="{{record.get('file_path')}}"
+								 width="150" height="150" alt="file">
+						{% endif %}
+						{% if record.get("text") %}
+							{{record.get("text")}}
+						{% endif %}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
 						{% if record.get("checking_time") %}
 							<button class="delete"
@@ -83,6 +89,16 @@
 			</div>
 		</form>
 		<script>
+			function submitOnEnter(event) {
+				if (event.which === 13 && !event.shiftKey) {
+					if (!event.repeat) {
+						const newEvent = new Event("submit", {cancelable: true});
+						event.target.form.dispatchEvent(newEvent);
+					}
+					event.preventDefault();
+				}
+			}
+			document.getElementById("text").addEventListener("keydown", submitOnEnter);
 			function inverseScroll() {
 			let scrollPosition = document.documentElement.scrollTop;
 			window.scrollTo({

@@ -27,6 +27,7 @@ app.include_router(router)
 app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 
+
 async def main():
     await init_tortoise()
     config = uvicorn.Config("app:app", port=8888, reload=True)
