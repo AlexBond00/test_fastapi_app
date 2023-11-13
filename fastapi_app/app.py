@@ -29,7 +29,7 @@ app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 async def main():
     await init_tortoise()
-    config = uvicorn.Config("app:app", port=8888)
+    config = uvicorn.Config("app:app", port=8080)
     server = uvicorn.Server(config)
     await server.serve()
 

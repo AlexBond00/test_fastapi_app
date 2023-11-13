@@ -101,13 +101,15 @@ async def delete_message(request: Request,
                                                      "chat_id": chat_id, "bot_id": bot_id})
 
 
-@router.get("/verification")
-def verification(request: Request):
+@router.get("/verification/")
+async def verification(request: Request):
     return templates.TemplateResponse("verification.html", {"request": request})
 
 
-@router.post("/verification_info")
-def verification(user_token: str = Form(default=None)):
+@router.post("/verification_info/")
+async def verification(
+        user_token: Annotated[str | None, Form()] = None):
+    print(1)
     if user_token == "fewrg44ff3rvg343f4gvrrr":
         content = {"user_token": user_token}
         response = JSONResponse(content=content)

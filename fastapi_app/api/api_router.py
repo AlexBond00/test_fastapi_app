@@ -53,7 +53,7 @@ async def get_dialogue_list(
 
 
 @api_router.get(
-    "/bots/{bot_id}/dialogues/{chat_id}", response_model=list[Message]
+    "/bots/{bot_id}/dialogues/{chat_id}/messages/", response_model=list[Message]
 )
 async def get_messages(
         chat_id: int,
@@ -86,7 +86,7 @@ async def send_message(
         }
         return JSONResponse(
             content=data,
-            status_code=HTTPStatus.NOT_FOUND
+            status_code=HTTPStatus.NOT_FOUND,
         )
     dialogue = await DialogueModel.get_or_none(
         chat_id=chat_id,
@@ -113,7 +113,7 @@ async def send_message(
         try:
             await file_sender(aio_bot, chat_id, files)
         except Exception as e:
-            pass
+            print(e)
 
     await dialogue.update_from_dict(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
@@ -123,7 +123,7 @@ async def send_message(
 
 
 @api_router.delete(
-    "/bots/{bot_id}/dialogues/{chat_id}/{message_id}/deleteMessage")
+    "/bots/{bot_id}/dialogues/{chat_id}/messages/{message_id}/deleteMessage")
 async def delete_message(
         bot_id: int,
         chat_id: int,
@@ -137,7 +137,7 @@ async def delete_message(
         }
         return JSONResponse(content=data, status_code=HTTPStatus.NOT_FOUND)
 
-    bot = await BotModel.get(uid=bot_id)
+    bot = await BotModel.get_or_none(uid=bot_id)
     if not bot:
         data = {
             "error_message": f"There is no such bot with "

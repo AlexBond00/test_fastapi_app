@@ -1,18 +1,38 @@
+import asyncio
 import uuid
 
 import aiogram
 from aiogram.types import BufferedInputFile
 from fastapi import UploadFile
-
 from ..config import __TYPES
 from ..utils.file_saver import save_file
 from ..utils.message_saver import save_message
+from aiogram.exceptions import TelegramNetworkError
+
+async def task_generator(function: callable, container: list, *args, **kwargs):
+    """
+    Creates a task based on the passed function and its arguments.
+    Adds a task to the passed list
+
+    :param function: Function to execute
+    :param container: The list where the tasks will be stored
+    :param args: Positional arguments for the function
+    :param kwargs: Named arguments for the function
+    :return:
+    """
+    coroutine = function(*args)
+    task = asyncio.create_task(coroutine, **kwargs)
+    container.append(task)
 
 
 async def send_according_to_message_type(
-        filename, content, aio_bot, chat_id: int, message_type: str = "text"
+        file: UploadFile, aio_bot, chat_id: int, message_type: str = "text"
 ) -> None:
-    """Refactoring."""
+    """Choose aiogram method to send file depending on its content type."""
+    salt = uuid.uuid4().hex
+    await file.seek(0)
+    content = await file.read()
+    filename = salt + "_" + file.filename
     message = await getattr(aio_bot, __TYPES[message_type])(
         chat_id,
         BufferedInputFile(content, filename)
@@ -22,50 +42,22 @@ async def send_according_to_message_type(
 
 
 async def message_sender(
-        filename, content, _type, aio_bot: aiogram.Bot, chat_id: int
+        file: UploadFile, aio_bot: aiogram.Bot, chat_id: int
 ):
     """Matches file types to tg send methods."""
+    file_content_type = file.content_type.split('/')[0]
     async with aio_bot.context():
-        if _type in __TYPES:
+        if file_content_type in __TYPES:
             await send_according_to_message_type(
-                filename, content, aio_bot, chat_id, _type)
+                file, aio_bot, chat_id, file_content_type)
         else:
             await send_according_to_message_type(
-                filename, content, aio_bot, chat_id)
+                file, aio_bot, chat_id)
 
 
 async def file_sender(aio_bot, chat_id, files: list[UploadFile]) -> None:
     for file in files:
-        salt = uuid.uuid4().hex
-        filename = salt + "_" + file.filename
-        _type = file.content_type.split('/')[0]
-        content = await file.read()
-        await message_sender(filename, content, _type, aio_bot, chat_id)
-    # try:
-    #     done, pending = await asyncio.wait(
-    #         tasks, return_when=asyncio.FIRST_EXCEPTION)
-    #     file_names_to_revoke_tasks: list[str] = []
-    #
-    #     for task in done:
-    #         exception = task.exception()
-    #         print(task.get_name(), exception)
-    #         if isinstance(
-    #                 exception,
-    #                 (TelegramNetworkError, TelegramBadRequest, ClientOSError)
-    #         ):
-    #             file_names_to_revoke_tasks.append(task.get_name())
-    #             for task_pend in pending:
-    #                 file_names_to_revoke_tasks.append(task_pend.get_name())
-    #                 task_pend.cancel()
-    #             for name in file_names_to_revoke_tasks:
-    #
-    #             await asyncio.sleep(1)
-    #
-    #             await file_sender(
-    #                 aio_bot, chat_id,
-    #                 contents=collect_contents
-    #             )
-    #             break
-    #
-    # except Exception as e:
-    #     pass
+        try:
+            await message_sender(file, aio_bot, chat_id)
+        except Exception as e:
+            raise e
