@@ -103,14 +103,15 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 		</div>
 		
 		<div class="replyBar">
-			<button class="attach">
-				<input id="file-input" type="file" name="file" multiple>
-               <label class="material-icons d45" for="file-input">attach_file</label>
-
-			</button>
-			
-			<input type="text" class="replyMessage" placeholder="Type your message..."/>
-			
+			<div class="replyBar">
+				<div class="attach">
+					<label for="avatar">
+						<img src="static/image/paper_clip.png" width="70" height="70" alt="add file" style="margin:0;">
+					</label>
+					<input type="file" id="avatar" name="files" class="file" multiple/>
+				</div>
+				<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
+			</div>
 			<div class="emojiBar">
 				<div class="emoticonType">
 				<button id="panelEmoji">Emoji</button>

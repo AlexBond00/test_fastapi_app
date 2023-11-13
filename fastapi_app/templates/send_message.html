@@ -1,9 +1,9 @@
 <form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="this" enctype="multipart/form-data" id="myForm">
 			<div class="replyBar">
-				<button class="attach">
-<!--					<i  class="material-icons d45">attach_file</i>-->
-					<input type="file" id="avatar" name="files" multiple/>
-				</button>
+				<div class="attach">
+					<label for="avatar" class="label"><img src="static/image/paper_clip.png" width="70" height="70" alt="add file"></label>
+					<input type="file" id="avatar" name="files" class="file" multiple/>
+				</div>
 					<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
 			</div>
 </form>

@@ -111,10 +111,10 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-    return RedirectResponse(f"/{bot_id}/{chat_id}/")
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
 
 
-@api_router.delete(
+@api_router.post(
     "/bots/{bot_id}/dialogues/{chat_id}/messages/{message_id}/deleteMessage")
 async def delete_message(
         bot_id: int,
@@ -129,7 +129,7 @@ async def delete_message(
         }
         return JSONResponse(content=data, status_code=HTTPStatus.NOT_FOUND)
 
-    bot = await BotModel.get_or_none(uid=bot_id)
+    bot = await BotModel.filter(uid=bot_id).first()
     if not bot:
         data = {
             "error_message": f"There is no such bot with "
@@ -147,4 +147,4 @@ async def delete_message(
 
     await message.delete()
     await message.save()
-    return Response(status_code=HTTPStatus.NO_CONTENT)
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")

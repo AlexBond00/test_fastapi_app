@@ -1,6 +1,6 @@
 <div class="chats">
 			{% for dialogue in dialogues %}
-			<button type="submit" hx-get="/dialog/{{bot_id}}/{{dialogue.chat_id}}" hx-target="#rightPanel">
+			<button type="submit" hx-post="/dialog/{{bot_id}}/{{dialogue.chat_id}}" hx-target="#rightPanel">
 			<div class="chatButton active">
 				<div class="chatInfo">
 
