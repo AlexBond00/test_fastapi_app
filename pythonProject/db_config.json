@@ -17,7 +17,8 @@
       "models": [
         "message_model",
         "dialogue_model",
-        "file_model"
+        "file_model",
+        "legacy_message_model"
       ],
       "default_connection": "test_connection"
     }

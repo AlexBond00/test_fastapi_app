@@ -8,7 +8,7 @@ from tortoise import Tortoise
 from dialogue_model import DialogueModel
 from message_middleware import SaveMiddleware
 from message_model import MessageModel
-
+from legacy_message_model import LegacyMessageModel
 
 async def init_tortoise():
     with open("db_config.json") as f:
@@ -49,7 +49,6 @@ async def main():
 
     @dp.edited_message()
     async def edited_message_handler(edited_message: aiogram.types.Message):
-        print(edited_message)
         message_id = edited_message.message_id
         chat_id = edited_message.chat.id
         new_text = edited_message.text
@@ -60,6 +59,12 @@ async def main():
         )
         if message_to_edit:
             js_obj = message_to_edit.json
+            await LegacyMessageModel.create(
+                chat_id=chat_id,
+                bot_id=message_to_edit.bot_id,
+                message_id=message_id,
+                json=js_obj
+            )
             js_obj['text'] = new_text
             upd = {"json": js_obj}
             await message_to_edit.update_from_dict(upd)
