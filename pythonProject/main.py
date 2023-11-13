@@ -49,6 +49,7 @@ async def main():
 
     @dp.edited_message()
     async def edited_message_handler(edited_message: aiogram.types.Message):
+        print(edited_message)
         message_id = edited_message.message_id
         chat_id = edited_message.chat.id
         new_text = edited_message.text
@@ -64,7 +65,7 @@ async def main():
             await message_to_edit.update_from_dict(upd)
             await message_to_edit.save()
 
-    bot = aiogram.Bot(token="6188043261:AAGYFnlrD1WhjK7UIoaa2XP1GZl6qE0dW3g")
+    bot = aiogram.Bot(token="6489796599:AAGyUnbepH9PN_aE7VYcutmxtCw7Wwmhoek")
 
     await dp.start_polling(bot)
 

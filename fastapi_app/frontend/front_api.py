@@ -1,21 +1,14 @@
-from pprint import pprint
-import datetime
 from typing import Annotated
 
 import aiohttp
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
-from pydantic import BaseModel
 from starlette.responses import RedirectResponse, JSONResponse
+
 
 from .response_parsing import response_parsing
 from .user_token_verify import validate_user_token
-
-
-class SendMessage(BaseModel):
-    message_text: str
 
 
 router = APIRouter()
@@ -46,14 +39,14 @@ async def get_dialogue_list(request: Request,
     return templates.TemplateResponse("dialogues.html", {"request": request, "dialogues": dialogues, "bot_id": bot_id})
 
 
-@router.get("/dialog/{bot_id}/{chat_id}", response_class=HTMLResponse)
+@router.post("/dialog/{bot_id}/{chat_id}", response_class=HTMLResponse)
 async def choose_dialogue(request: Request,
                           bot_id,
                           chat_id,
                           user_token: Annotated[dict, Depends(validate_user_token)]
                           ):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
+        async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}/messages') as result:
             records = await result.json()
 
     records_list = await response_parsing(records)
@@ -62,45 +55,15 @@ async def choose_dialogue(request: Request,
                                                      "chat_id": chat_id, "bot_id": bot_id})
 
 
-@router.post("/{bot_id}/{chat_id}/")
-async def send_message(request: Request,
-                       bot_id,
-                       chat_id,
-                       user_token: Annotated[dict, Depends(validate_user_token)]
-                       ):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
-            records = await result.json()
-
-    records_list = await response_parsing(records)
-
-    return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
-                                                     "chat_id": chat_id, "bot_id": bot_id})
-
-
-@router.get("/delete_message/{bot_id}/{chat_id}/{message_id}", response_class=HTMLResponse)
-async def delete_message(request: Request,
-                         bot_id,
-                         chat_id,
-                         user_token: Annotated[dict, Depends(validate_user_token)]
-                         ):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}') as result:
-            records = await result.json()
-
-    records_list = await response_parsing(records)
-
-    return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
-                                                     "chat_id": chat_id, "bot_id": bot_id})
-
-
-@router.get("/verification")
-def verification(request: Request):
+@router.get("/verification/")
+async def verification(request: Request):
     return templates.TemplateResponse("verification.html", {"request": request})
 
 
-@router.post("/verification_info")
-def verification(user_token: str = Form(default=None)):
+@router.post("/verification_info/")
+async def verification(
+        user_token: Annotated[str | None, Form()] = None):
+    print(1)
     if user_token == "fewrg44ff3rvg343f4gvrrr":
         content = {"user_token": user_token}
         response = JSONResponse(content=content)

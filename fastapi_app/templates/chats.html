@@ -49,12 +49,6 @@
 					<div class="msg messageReceived" style="white-space: pre-line;">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
-						<button class="delete"
-								type="submit"
-								value="delete"
-								hx-target="#rightPanel"
-								hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}">
-						</button>
 					</div>
         		{% endif %}
 
@@ -62,12 +56,14 @@
 					<div class="msg messageSent" style="white-space: pre-line;">
 						{{record.get("text")}}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
-						<button class="delete"
+						{% if record.get("checking_time") %}
+							<button class="delete"
 								type="submit"
 								value="delete"
 								hx-target="#rightPanel"
-								hx-get="/delete_message/{{bot_id}}/{{chat_id}}/{{record.get('message_id')}}">
-						</button>
+								hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/messages/{{record.get('message_id')}}/deleteMessage">
+							</button>
+						{% endif %}
 					</div>
 
 
