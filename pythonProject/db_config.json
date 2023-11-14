@@ -13,7 +13,7 @@
     }
   },
   "apps": {
-    "test_app": {
+    "plutus": {
       "models": [
         "dialogue_model",
         "file_model",

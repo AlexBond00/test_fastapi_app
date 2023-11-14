@@ -8,6 +8,7 @@ class MessageModel(Model):
     bot_id = fields.BigIntField()
     message_id = fields.BigIntField()
     json = fields.JSONField()
+    is_edited = fields.BooleanField(default=False)
     created_at = fields.DatetimeField(auto_now_add=True)
 
     def __str__(self):

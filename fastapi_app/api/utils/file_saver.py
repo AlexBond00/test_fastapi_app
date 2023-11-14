@@ -18,7 +18,7 @@ async def save_file(
     """Save file on server and in DB."""
     path = str(__MEDIA_PATH / filename)
     # folder with fastapi_app
-    relation_path = path.split("fastapi_app")[-1]
+    relation_path = path.split("fastapi_app/")[-1]
 
     async with aiofiles.open(path, 'wb') as out_file:
         await out_file.write(content)
