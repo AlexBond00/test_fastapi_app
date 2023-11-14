@@ -62,18 +62,16 @@ async def main():
         if message_to_edit:
             js_obj = message_to_edit.json
             await LegacyMessageModel.create(
-                chat_id=chat_id,
-                bot_id=message_to_edit.bot_id,
-                message_id=message_id,
+                message=message_to_edit,
                 json=js_obj
             )
             js_obj['text'] = new_text
-            upd = {"json": js_obj}
+            upd = {"json": js_obj, "is_edited": True}
             await message_to_edit.update_from_dict(upd)
             await message_to_edit.save()
 
     bots = [
-        aiogram.Bot(token="5542728649:AAG0Jx2b7aqfdfGT3LEASJsQN1zduEUBRAw"),
+        aiogram.Bot(token="6188043261:AAEG6bZ_HJozbLO3ytstwv_Z2Y-nsfCt76o"),
         aiogram.Bot(token="5889733176:AAHKbaB70yUayTROdGcebwYQWjr3g4a6KYs")
     ]
 

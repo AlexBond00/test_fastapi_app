@@ -12,15 +12,15 @@ from fastapi.responses import Response, RedirectResponse, JSONResponse
 from fastapi.routing import APIRouter
 from starlette.responses import FileResponse
 
-from .tortoise_models.file_model import FileModel
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
 from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
+from .tortoise_models.file_model import FileModel
 from .tortoise_models.message_model import MessageModel
 from .utils.logger import logger
 from .utils.senders import message_sender
-
+from .tortoise_models.legacy_message_model import LegacyMessageModel
 api_router = APIRouter()
 
 
@@ -115,7 +115,7 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
 
 
 @api_router.post(
@@ -151,14 +151,4 @@ async def delete_message(
 
     await message.delete()
     await message.save()
-    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
-
-
-@api_router.get("/getFile/{file_id}/")
-async def download_file(file_id: int):
-    file = await FileModel.get_or_none(id=file_id)
-    path = file.path
-    filename = path.split("/")[-1]
-    return FileResponse(
-        path, media_type='image/png', filename=filename
-    )
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
