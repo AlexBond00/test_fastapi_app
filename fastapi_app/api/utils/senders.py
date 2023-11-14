@@ -83,9 +83,9 @@ async def send_according_to_message_type(
         BufferedInputFile(content, filename),
         caption=text
     )
-    message_id = await save_message(message)
+    message_model = await save_message(message)
     await save_file(
-        content, filename, message_id, aio_bot.id, chat_id, content_type)
+        content, filename, message_model, content_type)
 
 
 async def file_sender(
@@ -144,7 +144,7 @@ async def message_sender(
                     # make dict with ids compare to file
                     zipped = dict(zip(msg_list, group_values))
                     # use dict to save each file in DB
-                    await bulk_save_file(zipped, aio_bot.id, chat_id)
+                    await bulk_save_file(zipped)
                 except (TelegramBadRequest, TelegramServerError) as e:
                     logger.log(level=logging.ERROR, msg=e)
                     continue
