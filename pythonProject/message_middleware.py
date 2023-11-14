@@ -28,7 +28,7 @@ class SaveMiddleware(BaseMiddleware):
         await dialogue.save()
 
         json_str = event.model_dump_json()
-        await MessageModel.create(
+        message = await MessageModel.create(
             chat_id=event.chat.id,
             bot_id=event.bot.id,
             json=json_str,
@@ -36,5 +36,5 @@ class SaveMiddleware(BaseMiddleware):
         )
         # Check if there are files in update
         # and download them on server if succeeded
-        await download_file(event)
+        await download_file(event, message)
         return await handler(event, data)

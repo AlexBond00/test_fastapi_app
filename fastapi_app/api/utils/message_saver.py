@@ -12,8 +12,8 @@ async def save_message(message: Message):
         json=json_str,
         message_id=message.message_id
     )
-    # Returns message_id to link to it
-    return message.message_id
+    # Returns message
+    return message
 
 
 async def bulk_save_message(messages: list[Message]):

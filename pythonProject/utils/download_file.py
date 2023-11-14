@@ -4,7 +4,7 @@ from typing import Final
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
-
+from message_model import MessageModel
 from file_model import FileModel
 
 __MEDIA_PATH: Final[Path] = (
@@ -12,7 +12,7 @@ __MEDIA_PATH: Final[Path] = (
 )
 
 
-async def download_file(event: Message):
+async def download_file(event: Message, db_message: MessageModel) -> None:
     """Download file from tg server."""
     # Possible attributes in event(Message) instance
     attrs = ["document", "photo", "audio", "video"]
@@ -24,8 +24,10 @@ async def download_file(event: Message):
             continue
         # If file is image tg makes them in 3 copies with
         # different qualities, choose the middle one
+        content_type = attr
         if attr == "photo":
             file = file[-2]
+            content_type = "image"
         # Generating uuid salt to reach uniqueness in filename
         salt = uuid.uuid4().hex
         file_id = file.file_id
@@ -39,24 +41,19 @@ async def download_file(event: Message):
         filename = __MEDIA_PATH / (salt + "_" + file_path.split('/')[-1])
         await event.bot.download_file(file_path, filename)
         await save_file_in_db(
-            str(filename), event.message_id, event.bot.id,
-            event.chat.id, "image"
+            str(filename), db_message, content_type
         )
 
 
 async def save_file_in_db(
         path: str,
-        message_id: int,
-        bot_id: int,
-        chat_id: int,
+        message: MessageModel,
         content_type: str
-):
+) -> None:
     """Save file in DB."""
     path = path.split("fastapi_app/")[-1]
     await FileModel.create(
         path=path,
-        message_id=message_id,
-        bot_id=bot_id,
-        chat_id=chat_id,
+        message=message,
         content_type=content_type
     )
