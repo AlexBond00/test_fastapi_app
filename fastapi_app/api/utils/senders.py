@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 import aiogram
@@ -5,6 +6,7 @@ from aiogram.exceptions import TelegramBadRequest, TelegramServerError
 from aiogram.types import BufferedInputFile, InputMediaDocument
 from fastapi import UploadFile
 
+from .logger import logger
 from ..config import __TYPE_ACTIONS
 from ..utils.file_saver import save_file, bulk_save_file
 from ..utils.message_saver import save_message, bulk_save_message
@@ -20,11 +22,14 @@ async def send_media_as_group(
     """Build media group and send it."""
     media_group = []
     for file in group:
-        media_group.append(builder(media=BufferedInputFile(
-                    await file.read(), file.filename), caption=text
-        )
+        media_group.append(
+            builder(
+                media=BufferedInputFile(await file.read(), file.filename),
+                caption=text
+            )
         )
         if text:
+            # set text to None after usage to not caption each file further
             text = None
     async with aio_bot.context():
         messages = await aio_bot.send_media_group(chat_id, media=media_group)
@@ -33,6 +38,8 @@ async def send_media_as_group(
 
 async def build_media_groups(files: list[UploadFile]) -> dict:
     """Media groups builder."""
+
+    # Initialized containers to fill with specific media types if exist
     build_media_groups.video = []
     build_media_groups.image = []
     build_media_groups.text = []
@@ -40,7 +47,9 @@ async def build_media_groups(files: list[UploadFile]) -> dict:
 
     for file in files:
         actions = await get_type_actions(file)
+        # get container name from config that depends on file content type
         container_name = actions.get("container")
+        # get container set above
         container: list = getattr(build_media_groups, container_name)
         container.append(file)
 
@@ -53,6 +62,7 @@ async def get_type_actions(file: UploadFile) -> dict:
     actions = __TYPE_ACTIONS.get(_type)
     if actions:
         return actions
+    # if there is no type matched we use default "text" type to handle file
     return __TYPE_ACTIONS.get("text")
 
 
@@ -67,13 +77,15 @@ async def send_according_to_message_type(
     salt = uuid.uuid4().hex
     content = await file.read()
     filename = salt + "_" + file.filename
+    content_type = file.content_type.split("/")[0]
     message = await getattr(aio_bot, method)(
         chat_id,
         BufferedInputFile(content, filename),
         caption=text
     )
     message_id = await save_message(message)
-    await save_file(content, filename, message_id)
+    await save_file(
+        content, filename, message_id, aio_bot.id, chat_id, content_type)
 
 
 async def file_sender(
@@ -86,7 +98,8 @@ async def file_sender(
     actions = await get_type_actions(file)
     try:
         method = actions.get("method")
-    except AttributeError:
+    except AttributeError as e:
+        logger.log(level=logging.ERROR, msg=e)
         method = "send_document"
     async with aio_bot.context():
         await send_according_to_message_type(
@@ -101,6 +114,7 @@ async def message_sender(
         files: list[UploadFile] | None = None,
 
 ) -> None:
+    """Handler to send messages."""
     if not files:
         async with aio_bot.context():
             message = await aio_bot.send_message(
@@ -108,12 +122,16 @@ async def message_sender(
                 text=text
             )
             await save_message(message)
-
+    # If there are text and files in one request
+    # we try to caption some file or file groups (media group)
+    # with sent text
     if files:
         file_groups = await build_media_groups(files)
-
+        # EASTER: what does .items() method returns? :)
         for group_name, group_values in file_groups.items():
+            # if files more than one we try to send them as media group
             if len(group_values) > 1:
+                # get aiogram class from config to modify fies
                 builder = __TYPE_ACTIONS.get(
                     group_name).get("aio_file_builder")
                 try:
@@ -121,11 +139,14 @@ async def message_sender(
                         messages = await send_media_as_group(
                             group_values, aio_bot, chat_id, builder, text
                         )
-                        msg_list = await bulk_save_message(messages)
-                        zipped = dict(zip(msg_list, group_values))
-                        await bulk_save_file(zipped)
+                    # get list with saved messages' ids
+                    msg_list = await bulk_save_message(messages)
+                    # make dict with ids compare to file
+                    zipped = dict(zip(msg_list, group_values))
+                    # use dict to save each file in DB
+                    await bulk_save_file(zipped, aio_bot.id, chat_id)
                 except (TelegramBadRequest, TelegramServerError) as e:
-                    print(e)
+                    logger.log(level=logging.ERROR, msg=e)
                     continue
                 finally:
                     text = None
@@ -135,7 +156,8 @@ async def message_sender(
                     file = group_values[0]
                     await file_sender(file, aio_bot, chat_id, text)
                 except Exception as e:
-                    raise e
+                    logger.log(level=logging.ERROR, msg=e)
+                    continue
                 finally:
                     text = None
             else:

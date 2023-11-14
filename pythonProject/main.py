@@ -6,11 +6,13 @@ import aiogram
 from tortoise import Tortoise
 
 from dialogue_model import DialogueModel
+from legacy_message_model import LegacyMessageModel
 from message_middleware import SaveMiddleware
 from message_model import MessageModel
-from legacy_message_model import LegacyMessageModel
+
 
 async def init_tortoise():
+    """Tortoise initialization."""
     with open("db_config.json") as f:
         json_data = json.load(f)
 
@@ -30,7 +32,7 @@ async def main():
 
     @dp.message()
     async def message_handler(message: aiogram.types.Message):
-        answer = await message.answer("Hello_world!")
+        answer = await message.answer("Hello world!")
         dialogue = await DialogueModel.get_or_none(
             chat_id=message.chat.id,
             bot_id=message.bot.id
@@ -70,9 +72,12 @@ async def main():
             await message_to_edit.update_from_dict(upd)
             await message_to_edit.save()
 
-    bot = aiogram.Bot(token="6489796599:AAGyUnbepH9PN_aE7VYcutmxtCw7Wwmhoek")
+    bots = [
+        aiogram.Bot(token="6188043261:AAGYFnlrD1WhjK7UIoaa2XP1GZl6qE0dW3g"),
+        aiogram.Bot(token="5889733176:AAHKbaB70yUayTROdGcebwYQWjr3g4a6KYs")
+    ]
 
-    await dp.start_polling(bot)
+    await dp.start_polling(*bots)
 
 
 if __name__ == "__main__":

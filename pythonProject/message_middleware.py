@@ -17,14 +17,16 @@ class SaveMiddleware(BaseMiddleware):
             event: Message,
             data: Dict[str, Any]
     ) -> Any:
+        # TODO: check if event.bot exists
         dialogue, _ = await DialogueModel.get_or_create(
-            chat_id=event.chat.id,
-            bot_id=event.bot.id
+            bot_id=event.bot.id,
+            chat_id=event.chat.id
         )
         await dialogue.update_from_dict(
             {"updated_at": datetime.datetime.now()}
         )
         await dialogue.save()
+
         json_str = event.model_dump_json()
         await MessageModel.create(
             chat_id=event.chat.id,

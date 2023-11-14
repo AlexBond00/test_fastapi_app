@@ -7,5 +7,8 @@ class FileModel(Model):
     path: str = fields.CharField(max_length=250)
     message_id: int = fields.BigIntField()
 
+    def __str__(self):
+        return self.path
+
     class Meta:
         table = "file"
