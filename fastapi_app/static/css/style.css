@@ -611,6 +611,14 @@ div[class~="onTop"] > .count {
 	background: #FFF;
 }
 
+.send_message {
+    width: 120px;
+    height: 70px;
+    border: none;
+    background-image: url('static/image/send.png');
+    background-size: cover;
+}
+
 .leftSide {
 	display: inline-block;
 	clear: none;

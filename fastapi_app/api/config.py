@@ -5,7 +5,7 @@ from aiogram.types import (
     InputMediaAudio, InputMediaPhoto, InputMediaDocument, InputMediaVideo
 )
 
-__DEFAULT_LIMIT: Final[int] = 50
+__DEFAULT_LIMIT: Final[int] = 100
 
 __DEFAULT_OFFSET: Final[int] = 0
 

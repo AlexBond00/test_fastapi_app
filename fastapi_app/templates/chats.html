@@ -37,6 +37,15 @@
 				  background-image: url('static/image/delete.png');
 				  background-size: cover;
 			}
+
+			.send_message {
+				  width: 120px;
+				  height: 70px;
+				  border: none;
+				  background-image: url('static/image/send.png');
+				  background-size: cover;
+			}
+
 			.file {
 				width: 0.1px;
   				height: 0.1px;
@@ -71,9 +80,8 @@
 							</button>
 						{% endif %}
 					</div>
-
-
         		{% endif %}
+
     		{% endfor %}
 		</div>
 		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="#rightPanel" enctype="multipart/form-data" id="myForm">
@@ -86,6 +94,8 @@
 					<input type="file" id="avatar" name="files" class="file" multiple/>
 				</div>
 				<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
+				<button class="send_message" type="submit" value="send">
+				</button>
 			</div>
 		</form>
 		<script>

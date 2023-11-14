@@ -111,7 +111,7 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
 
 
 @api_router.post(
@@ -147,4 +147,4 @@ async def delete_message(
 
     await message.delete()
     await message.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
