@@ -1,6 +1,7 @@
 import asyncio
 import json
-import os
+import logging
+import sys
 
 import uvicorn
 from fastapi import FastAPI
@@ -9,6 +10,8 @@ from tortoise import Tortoise
 
 from api.api_router import api_router
 from frontend.front_api import router
+
+logging.basicConfig(level=logging.INFO, stream=sys.stderr)
 
 
 async def init_tortoise():
@@ -25,13 +28,14 @@ async def init_tortoise():
 app = FastAPI()
 app.include_router(api_router)
 app.include_router(router)
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
-
+app.mount(
+    "/static", StaticFiles(directory="static", html=True), name="static"
+)
 
 
 async def main():
     await init_tortoise()
-    config = uvicorn.Config("app:app", port=8888, reload=True)
+    config = uvicorn.Config("app:app", port=8080, reload=True)
     server = uvicorn.Server(config)
     await server.serve()
 

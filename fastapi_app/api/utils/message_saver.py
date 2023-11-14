@@ -14,3 +14,9 @@ async def save_message(message: Message):
     )
     # Returns message_id to link to it
     return message.message_id
+
+
+async def bulk_save_message(messages: list[Message]):
+    """DB bulk messages savior."""
+    messages = [await save_message(message) for message in messages]
+    return messages

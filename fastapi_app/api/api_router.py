@@ -1,4 +1,5 @@
 import datetime
+import logging
 from http import HTTPStatus
 from typing import Annotated
 
@@ -9,12 +10,15 @@ from fastapi import Form
 from fastapi import UploadFile
 from fastapi.responses import Response, RedirectResponse, JSONResponse
 from fastapi.routing import APIRouter
+from starlette.responses import FileResponse
 
+from .tortoise_models.file_model import FileModel
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
 from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
+from .utils.logger import logger
 from .utils.senders import message_sender
 
 api_router = APIRouter()
@@ -105,13 +109,13 @@ async def send_message(
     try:
         await message_sender(aio_bot, chat_id, text, files)
     except Exception as e:
-        pass
+        logger.log(level=logging.ERROR, msg=e)
 
     await dialogue.update_from_dict(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
 
 
 @api_router.post(
@@ -147,4 +151,14 @@ async def delete_message(
 
     await message.delete()
     await message.save()
-    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+
+
+@api_router.get("/getFile/{message_id}/")
+async def download_file(message_id: int):
+    file = await FileModel.get_or_none(message_id=message_id)
+    path = file.path
+    filename= path.split("/")[-1]
+    return FileResponse(
+        path, media_type='image/png', filename=filename
+    )

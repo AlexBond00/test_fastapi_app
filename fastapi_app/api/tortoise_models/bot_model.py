@@ -2,10 +2,11 @@ from tortoise import Model, fields
 
 
 class BotModel(Model):
+    """Telegram bot model."""
     id = fields.IntField(pk=True)
     title = fields.CharField(max_length=64)
-    uid = fields.BigIntField(null=False)
     token = fields.CharField(max_length=128)
+    uid = fields.BigIntField(null=False)
     created_at = fields.DatetimeField(auto_now_add=True)
 
     def __str__(self):

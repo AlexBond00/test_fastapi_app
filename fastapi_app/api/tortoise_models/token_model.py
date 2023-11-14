@@ -13,6 +13,9 @@ class Token(Model):
     class Meta:
         table = "token"
 
+    def __str__(self):
+        return str(self.token)
+
     def is_expired(self):
         """Check if token expired."""
         timedelta_days = (datetime.datetime.now() - self.updated_at).day
