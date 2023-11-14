@@ -13,8 +13,9 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
         text = record.get("json").get("text")
         date = record.get("created_at")
         date_now: datetime = datetime.now()
+        found_id = record.get("id")
         message_id = record.get("message_id")
-        file: FileModel = await FileModel.get_or_none(message_id=message_id)
+        file: FileModel = await FileModel.get_or_none(message_id=found_id)
         # checking for the presence of a file
         if file:
             file_path = file.path

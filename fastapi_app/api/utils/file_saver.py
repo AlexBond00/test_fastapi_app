@@ -29,7 +29,7 @@ async def save_file(
 
 
 async def bulk_save_file(
-        mapped_files: dict[int, UploadFile],
+        mapped_files: dict[MessageModel, UploadFile],
 ):
     """Save multiple files on server and in DB."""
     for message, file in mapped_files.items():
