@@ -10,11 +10,14 @@ class Dialogue(BaseModel):
 
 
 class Message(BaseModel):
+    id: int
     bot_id: int
     chat_id: int
     message_id: int
     json: dict
+    is_edited: bool | None
     created_at: datetime
+
 
 
 class Bot(BaseModel):

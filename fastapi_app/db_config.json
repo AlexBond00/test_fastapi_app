@@ -19,7 +19,8 @@
         "api.tortoise_models.dialogue_model",
         "api.tortoise_models.bot_model",
         "api.tortoise_models.file_model",
-        "api.tortoise_models.token_model"
+        "api.tortoise_models.token_model",
+        "api.tortoise_models.legacy_message_model"
       ],
       "default_connection": "test_connection"
     }

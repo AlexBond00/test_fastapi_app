@@ -56,7 +56,31 @@
     		{% for record in records_list %}
         		{% if not record.get("is_bot") %}
 					<div class="msg messageReceived" style="white-space: pre-line;">
+						{% if record.get("file_path") and record.get("file_type") == "image" %}
+							<img src="{{record.get('file_path')}}"
+								 width="150" height="150" alt="file">
+						{% elif record.get("file_path") and record.get("file_type") != "image" %}
+								<a href="{{record.get('file_path')}}" style="margin:0" download>
+									<img src="static/image/documents.png"
+								 	width="150" height="150" alt="file" style="margin:0">
+									<p>This message contains<br> a document, click<br> on it to download.</p>
+								</a>
+						{% endif %}
 						{{record.get("text")}}
+						{% if record.get("legacy_messages_list") %}
+						<a href="#{{record.get('message_id')}}">
+							<img src="static/image/information.png"
+								 	width="24" height="24" alt="information" style="margin:0">
+						</a>
+					    <a href="#x" class="overlay" id="{{record.get('message_id')}}"></a>
+							<div class="popup">
+								<h1>Message change history</h1>
+								{% for legacy_message in record.get("legacy_messages_list") %}
+									<p>{{legacy_message.get('created_at')}} {{legacy_message.get('text')}}</p>
+								{% endfor %}
+								<a class="close" title="Закрыть" href="#close"></a>
+							</div>
+						{% endif %}
 						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
 					</div>
         		{% endif %}
@@ -72,14 +96,61 @@
 								 	width="150" height="150" alt="file" style="margin:0">
 									<p>This message contains<br> a document, click<br> on it to download.</p>
 								</a>
-						<a href="#win2" >Открыть окно 2</a>
-						   <a href="#x" class="overlay" id="win2"></a>
-							<div class="popup">
-							 Здесь вы можете разместить любое содержание, текст с картинками или видео!
-							  <img title="" src="https://picsum.photos/400/300/?random" width="400" height="300" alt="" />
-							<a class="close" title="Закрыть" href="#close"></a>
-								</div>
-						<style> .overlay {
+						{% endif %}
+						{% if record.get("text") %}
+							{{record.get("text")}}
+						{% endif %}
+						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
+						{% if record.get("checking_time") %}
+							<button class="delete"
+								type="submit"
+								value="delete"
+								hx-target="#rightPanel"
+								hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/messages/{{record.get('message_id')}}/deleteMessage">
+							</button>
+						{% endif %}
+					</div>
+        		{% endif %}
+    		{% endfor %}
+		</div>
+		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="#rightPanel" enctype="multipart/form-data" id="myForm">
+
+			<div class="replyBar">
+				<div class="attach">
+					<label for="avatar">
+						<img src="static/image/paper_clip.png" width="70" height="70" alt="add file" style="margin:0;">
+					</label>
+					<input type="file" id="avatar" name="files" class="file" multiple/>
+				</div>
+				<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
+				<button class="send_message" type="submit" value="send">
+				</button>
+			</div>
+		</form>
+		<script>
+			function submitOnEnter(event) {
+				if (event.which === 13 && !event.shiftKey) {
+					if (!event.repeat) {
+						const newEvent = new Event("submit", {cancelable: true});
+						event.target.form.dispatchEvent(newEvent);
+					}
+					event.preventDefault();
+				}
+			}
+			document.getElementById("text").addEventListener("keydown", submitOnEnter);
+			function inverseScroll() {
+			let scrollPosition = document.documentElement.scrollTop;
+			window.scrollTo({
+			top: scrollPosition - window.innerHeight,
+			behavior: 'smooth'
+			  });
+			}
+			window.addEventListener('scroll', inverseScroll);
+		</script>
+	</div>
+</body>
+<style>
+.overlay {
 top: 0;
 right: 0;
 bottom: 0;
@@ -263,58 +334,5 @@ margin-bottom: 10px;
 .button:active {
     background-color: #0000ff;
     box-shadow:0 0 0 0 #ffffff;
-}</style>
-						{% endif %}
-						{% if record.get("text") %}
-							{{record.get("text")}}
-						{% endif %}
-						<span class="timestamp">{{record.get("correct_date")}} {{record.get("correct_time")}}</span>
-						{% if record.get("checking_time") %}
-							<button class="delete"
-								type="submit"
-								value="delete"
-								hx-target="#rightPanel"
-								hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/messages/{{record.get('message_id')}}/deleteMessage">
-							</button>
-						{% endif %}
-					</div>
-        		{% endif %}
-
-    		{% endfor %}
-		</div>
-		<form hx-post="/bots/{{bot_id}}/dialogues/{{chat_id}}/sendMessage/" hx-target="#rightPanel" enctype="multipart/form-data" id="myForm">
-
-			<div class="replyBar">
-				<div class="attach">
-					<label for="avatar">
-						<img src="static/image/paper_clip.png" width="70" height="70" alt="add file" style="margin:0;">
-					</label>
-					<input type="file" id="avatar" name="files" class="file" multiple/>
-				</div>
-				<textarea id="text" name="text" class="replyMessage" placeholder="Type your message..."></textarea>
-				<button class="send_message" type="submit" value="send">
-				</button>
-			</div>
-		</form>
-		<script>
-			function submitOnEnter(event) {
-				if (event.which === 13 && !event.shiftKey) {
-					if (!event.repeat) {
-						const newEvent = new Event("submit", {cancelable: true});
-						event.target.form.dispatchEvent(newEvent);
-					}
-					event.preventDefault();
-				}
-			}
-			document.getElementById("text").addEventListener("keydown", submitOnEnter);
-			function inverseScroll() {
-			let scrollPosition = document.documentElement.scrollTop;
-			window.scrollTo({
-			top: scrollPosition - window.innerHeight,
-			behavior: 'smooth'
-			  });
-			}
-			window.addEventListener('scroll', inverseScroll);
-		</script>
-	</div>
-</body>
+}
+</style>

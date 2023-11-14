@@ -3,6 +3,7 @@ from pprint import pprint
 from typing import Any
 
 from api.tortoise_models.file_model import FileModel
+from api.tortoise_models.legacy_message_model import LegacyMessageModel
 
 
 async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -14,6 +15,7 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
         date_now: datetime = datetime.now()
         message_id = record.get("message_id")
         file: FileModel = await FileModel.get_or_none(message_id=message_id)
+        # checking for the presence of a file
         if file:
             file_path = file.path
             file_type = file.content_type
@@ -33,12 +35,22 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
         correct_date = str(date_time_obj.date())
         correct_time = str(date_time_obj.time())
 
+        # get the modified messages
+        legacy_messages_list: list[dict[str]] = []
+        legacy_messages: list[LegacyMessageModel] = await LegacyMessageModel.filter(
+            message_id=record.get("id")
+        ).all()
+        for legacy_message in legacy_messages:
+            legacy_messages_list.append({"created_at": str(legacy_message.created_at)[:16],
+                                         "text": legacy_message.json.get("text")})
+
         records_list.append({"is_bot": is_bot, "text": text,
                              "correct_date": correct_date, "correct_time": correct_time[:5],
                              "checking_time": checking_time,
                              "file_path": file_path,
                              "file_type": file_type,
                              "file_id": file_id,
-                             "message_id": message_id})
+                             "message_id": message_id,
+                             "legacy_messages_list": legacy_messages_list})
 
     return records_list
