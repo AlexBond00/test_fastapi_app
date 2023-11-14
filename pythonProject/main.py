@@ -73,7 +73,7 @@ async def main():
             await message_to_edit.save()
 
     bots = [
-        aiogram.Bot(token="6188043261:AAGYFnlrD1WhjK7UIoaa2XP1GZl6qE0dW3g"),
+        aiogram.Bot(token="5542728649:AAG0Jx2b7aqfdfGT3LEASJsQN1zduEUBRAw"),
         aiogram.Bot(token="5889733176:AAHKbaB70yUayTROdGcebwYQWjr3g4a6KYs")
     ]
 

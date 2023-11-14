@@ -115,7 +115,7 @@ async def send_message(
             {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
         )
     await dialogue.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
 
 
 @api_router.post(
@@ -151,14 +151,14 @@ async def delete_message(
 
     await message.delete()
     await message.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
 
 
-@api_router.get("/getFile/{message_id}/")
-async def download_file(message_id: int):
-    file = await FileModel.get_or_none(message_id=message_id)
+@api_router.get("/getFile/{file_id}/")
+async def download_file(file_id: int):
+    file = await FileModel.get_or_none(id=file_id)
     path = file.path
-    filename= path.split("/")[-1]
+    filename = path.split("/")[-1]
     return FileResponse(
         path, media_type='image/png', filename=filename
     )

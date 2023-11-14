@@ -16,8 +16,12 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
         file: FileModel = await FileModel.get_or_none(message_id=message_id)
         if file:
             file_path = file.path
+            file_type = file.content_type
+            file_id = file.id
         else:
             file_path = False
+            file_type = False
+            file_id = False
         # converting a string to a date object
         date_time_obj = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
         # checking how much time has passed since sending the message
@@ -33,6 +37,8 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
                              "correct_date": correct_date, "correct_time": correct_time[:5],
                              "checking_time": checking_time,
                              "file_path": file_path,
+                             "file_type": file_type,
+                             "file_id": file_id,
                              "message_id": message_id})
 
     return records_list

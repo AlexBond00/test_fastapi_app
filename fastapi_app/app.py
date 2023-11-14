@@ -35,7 +35,7 @@ app.mount(
 
 async def main():
     await init_tortoise()
-    config = uvicorn.Config("app:app", port=8080, reload=True)
+    config = uvicorn.Config("app:app", port=8888, reload=True)
     server = uvicorn.Server(config)
     await server.serve()
 
