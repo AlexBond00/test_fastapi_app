@@ -60,7 +60,6 @@ async def verification(request: Request):
 @router.post("/verification_info/")
 async def verification(
         user_token: Annotated[str | None, Form()] = None):
-    print(1)
     if user_token == "fewrg44ff3rvg343f4gvrrr":
         content = {"user_token": user_token}
         response = JSONResponse(content=content)

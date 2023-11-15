@@ -7,7 +7,7 @@ from tortoise import Model, fields
 class Token(Model):
     """Token model."""
     id = fields.BigIntField(pk=True)
-    token = fields.UUIDField(index=True, default=uuid.uuid4())
+    token = fields.UUIDField(index=True, default=uuid.uuid4().hex)
     updated_at = fields.DatetimeField(auto_now=True)
 
     class Meta:

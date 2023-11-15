@@ -16,7 +16,7 @@ async def save_message(message: Message):
     return message
 
 
-async def bulk_save_message(messages: list[Message]):
+async def bulk_save_message(messages: list[Message]) -> list[MessageModel]:
     """DB bulk messages savior."""
     messages = [await save_message(message) for message in messages]
     return messages

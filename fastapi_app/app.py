@@ -9,6 +9,7 @@ from starlette.staticfiles import StaticFiles
 from tortoise import Tortoise
 
 from api.api_router import api_router
+from api.config import __ROOT_PATH
 from frontend.front_api import router
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr)
