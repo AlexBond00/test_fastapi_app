@@ -11,7 +11,7 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
     for record in records:
         is_bot = record.get("json").get("from_user").get("is_bot")
         text = record.get("json").get("text")
-        date = record.get("created_at")
+        date = record.get("created_at")[:16]
         date_now: datetime = datetime.now()
         found_id = record.get("id")
         message_id = record.get("message_id")
@@ -19,6 +19,7 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
         # checking for the presence of a file
         if file:
             file_path = file.path
+            print(file_path)
             file_type = file.content_type
             file_id = file.id
         else:
@@ -26,7 +27,7 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
             file_type = False
             file_id = False
         # converting a string to a date object
-        date_time_obj = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+        date_time_obj = datetime.strptime(date, '%Y-%m-%dT%H:%M')
         # checking how much time has passed since sending the message
         timer_limit = date_now - date_time_obj
         if timer_limit.days < 2:
@@ -46,7 +47,7 @@ async def response_parsing(records: list[dict[str, Any]]) -> list[dict[str, Any]
                                          "text": legacy_message.json.get("text")})
 
         records_list.append({"is_bot": is_bot, "text": text,
-                             "correct_date": correct_date, "correct_time": correct_time[:5],
+                             "correct_date": correct_date, "correct_time": correct_time,
                              "checking_time": checking_time,
                              "file_path": file_path,
                              "file_type": file_type,

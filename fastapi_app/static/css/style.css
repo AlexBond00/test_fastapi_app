@@ -692,7 +692,7 @@ div[class~="onTop"] > .count {
 .msg {
 	position: relative;
 	width: auto;
-	min-width: 100px;
+	min-width: 170px;
 	max-width: 45%;
 	height: auto;
 	padding: 25px;

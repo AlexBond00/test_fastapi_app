@@ -57,23 +57,18 @@ async def get_dialogue_list(
 
 @api_router.get(
     "/bots/{bot_id}/dialogues/{chat_id}/messages/",
-    response_model=list[Message]
+    # response_model=list[Message]
 )
 async def get_messages(
         chat_id: int,
         bot_id: int,
-        offset: int = __DEFAULT_OFFSET,
-        limit: int = __DEFAULT_LIMIT
-) -> list[MessageModel] | Response:
+):
     messages: list[MessageModel] = await MessageModel.filter(
         chat_id=chat_id,
         bot_id=bot_id
-    ).all().offset(offset).limit(limit)
+    ).all()
 
-    if messages:
-        return messages
-
-    return Response(status_code=HTTPStatus.NOT_FOUND)
+    return messages
 
 
 @api_router.post("/bots/{bot_id}/dialogues/{chat_id}/sendMessage/")

@@ -29,17 +29,17 @@
 
 			</div>
 		</div>
-		<div class="convHistory userBg">
+		<div id="chatPanel" class="convHistory userBg">
 			<!-- Cycle through all messages -->
     		{% for record in records_list %}
 				<!-- Checking who wrote this message -->
         		{% if not record.get("is_bot") %}
-					<div class="msg messageReceived" style="white-space: pre-line;">
+					<div class="msg messageReceived" style="white-space: nowrap;">
 						<!-- Checking whether the message contains a file and whether this file is an image -->
 						{% if record.get("file_path") and record.get("file_type") == "image" %}
 							<!-- attach a photo -->
-							<img src="{{record.get('file_path')}}"
-								 width="150" height="150" alt="file">
+							<p><img src="{{record.get('file_path')}}"
+								 width="150" height="150" alt="file"></p>
 						<!-- Checking whether the message contains a file and whether this file is not an image -->
 						{% elif record.get("file_path") and record.get("file_type") != "image" %}
 							<!-- attach a document for download -->
@@ -74,7 +74,7 @@
         		{% endif %}
 				<!-- Checking who wrote this message -->
         		{% if record.get("is_bot") %}
-					<div class="msg messageSent" style="white-space: pre-line;">
+					<div class="msg messageSent" style="white-space: nowrap;">
 						<!-- Checking whether the message contains a file and whether this file is an image -->
 						{% if record.get("file_path") and record.get("file_type") == "image" %}
 							<img src="{{record.get('file_path')}}"
