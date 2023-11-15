@@ -19,7 +19,6 @@ class Message(BaseModel):
     created_at: datetime
 
 
-
 class Bot(BaseModel):
     title: str
     token: str

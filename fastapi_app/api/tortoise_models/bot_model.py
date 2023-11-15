@@ -3,7 +3,7 @@ from tortoise import Model, fields
 
 class BotModel(Model):
     """Telegram bot model."""
-    id = fields.IntField(pk=True)
+    id = fields.BigIntField(pk=True)
     title = fields.CharField(max_length=64)
     token = fields.CharField(max_length=128)
     uid = fields.BigIntField(null=False)
