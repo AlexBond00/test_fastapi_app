@@ -1,15 +1,15 @@
+from typing import Annotated
+from uuid import UUID
 import aiohttp
 from fastapi import APIRouter, Request, Form, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from typing import Annotated
-
+from tortoise.fields import UUIDField
+from fastapi.responses import Response
+from api.tortoise_models.token_model import Token
 from .response_parsing import response_parsing
 from .user_token_verify import validate_user_token
-from api.tortoise_models.token_model import Token
-
-
+import binascii
 router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
@@ -64,13 +64,10 @@ async def verification(request: Request):
 
 @router.post("/verification_info/")
 async def verification(user_token: Annotated[str | None, Form()] = None):
-    list_tokens: list[str] = []
-    tokens: list[Token] = await Token.all()
-    for token in tokens:
-        list_tokens.append(str(token.token))
-    if user_token in list_tokens:
-        response = RedirectResponse("/messages")
-        response.set_cookie(key="user_token", value=user_token)
-        return response
-    else:
-        return "Токен неверный"
+    error = "Invalid token"
+    token_exist: bool = await Token.exists(token=user_token)
+    if not token_exist:
+        return error
+    response = RedirectResponse("/messages/")
+    response.set_cookie(key="user_token", value=user_token)
+    return response

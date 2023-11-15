@@ -2,7 +2,7 @@ import datetime
 import logging
 from http import HTTPStatus
 from typing import Annotated
-
+from .tortoise_models.token_model import Token
 import aiogram
 import pytz
 from fastapi import Depends, File, Form, UploadFile
@@ -24,10 +24,12 @@ api_router = APIRouter()
 @api_router.get(
     "/bots/", response_model=list[Bot])
 async def get_bots(
-        user_token: Annotated[dict, Depends(validate_user_token)],
+        # user_token: Annotated[dict, Depends(validate_user_token)],
         offset: int = __DEFAULT_OFFSET,
         limit: int = __DEFAULT_LIMIT
 ) -> list[BotModel]:
+    await Token.create()
+
     bots: list[BotModel] = await BotModel.all().offset(offset).limit(limit)
 
     return bots

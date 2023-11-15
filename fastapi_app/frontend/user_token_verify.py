@@ -13,13 +13,13 @@ async def validate_user_token(
     """Token validator."""
     exception = HTTPException(status_code=HTTPStatus.FORBIDDEN)
     exception.detail = {"error": "Permission denied"}
-    try:
-        uuid_token = UUID(user_token)
-    except ValueError as e:
-        detail = {"message": str(e)}
-        exception.detail.update(detail)
-        raise exception
-    if not await Token.filter(token=uuid_token).exists():
+    # try:
+    #     uuid_token = UUID(user_token)
+    # except ValueError as e:
+    #     detail = {"message": str(e)}
+    #     exception.detail.update(detail)
+    #     raise exception
+    if not await Token.exists(token=user_token):
         detail = {"message": "Invalid token"}
         exception.detail.update(detail)
         raise exception
