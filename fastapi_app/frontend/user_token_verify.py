@@ -1,10 +1,8 @@
 from http import HTTPStatus
-from typing import Annotated, Union
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import Cookie, HTTPException, Form
-
-from api.tortoise_models.token_model import Token
+from fastapi import Cookie, HTTPException
 
 from api.tortoise_models.token_model import Token
 

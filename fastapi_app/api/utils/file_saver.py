@@ -6,6 +6,7 @@ from fastapi import UploadFile
 from ..config import __MEDIA_PATH
 from ..tortoise_models.file_model import FileModel
 from ..tortoise_models.message_model import MessageModel
+from ..utils.get_file_type import get_file_type
 
 
 async def save_file(
@@ -38,7 +39,7 @@ async def bulk_save_file(
         salt = uuid.uuid4().hex
         content = await file.read()
         filename = salt + "_" + file.filename
-        content_type = file.content_type.split("/")[0]
+        content_type = await get_file_type(file)
         await save_file(
             content, filename, message, content_type
         )

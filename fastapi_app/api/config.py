@@ -17,14 +17,13 @@ __TYPE_ACTIONS: Final[dict] = {
     },
     "image": {
         "method": "send_photo",
-        "container": "image",
+        "container": "visual",
         "aio_file_builder": InputMediaPhoto
     },
     "video": {
         "method": "send_video",
-        "container": "video",
+        "container": "visual",
         "aio_file_builder": InputMediaVideo
-
     },
     "text": {
         "method": "send_document",
@@ -40,3 +39,5 @@ __MEDIA_PATH: Final[Path] = __ROOT_PATH / 'static/media'
 
 # How many days token stays valid before recreation
 __TOKEN_DAY_EXPIRE: Final[int] = 7
+
+__TG_MEDIA_TYPES: Final[tuple] = ("audio", "image", "video", "text")

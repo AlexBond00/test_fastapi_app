@@ -57,11 +57,6 @@ async def choose_dialogue(request: Request,
                                                      "limit": limit})
 
 
-# @router.get("/legacy_massage/{massage_id}/")
-# async def legacy_massage():
-
-
-
 @router.get("/verification/")
 async def verification(request: Request):
     return templates.TemplateResponse("verification.html", {"request": request})
