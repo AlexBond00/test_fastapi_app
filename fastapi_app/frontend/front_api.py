@@ -2,11 +2,13 @@ import aiohttp
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from starlette.responses import RedirectResponse, JSONResponse
+from starlette.responses import RedirectResponse
 from typing import Annotated
 
 from .response_parsing import response_parsing
 from .user_token_verify import validate_user_token
+from api.tortoise_models.token_model import Token
+
 
 router = APIRouter()
 
@@ -36,11 +38,13 @@ async def get_dialogue_list(request: Request,
     return templates.TemplateResponse("dialogues.html", {"request": request, "dialogues": dialogues, "bot_id": bot_id})
 
 
-@router.post("/dialog/{bot_id}/{chat_id}", response_class=HTMLResponse)
+@router.post("/dialogues/{bot_id}/{chat_id}", response_class=HTMLResponse)
 async def choose_dialogue(request: Request,
                           bot_id,
                           chat_id,
-                          user_token: Annotated[dict, Depends(validate_user_token)]
+                          user_token: Annotated[dict, Depends(validate_user_token)],
+                          offset: int = 0,
+                          limit: int = 10
                           ):
     async with aiohttp.ClientSession() as session:
         async with session.get(f'http://localhost:8888/bots/{bot_id}/dialogues/{chat_id}/messages') as result:
@@ -49,7 +53,13 @@ async def choose_dialogue(request: Request,
     records_list = await response_parsing(records)
 
     return templates.TemplateResponse("chats.html", {"request": request, "records_list": records_list,
-                                                     "chat_id": chat_id, "bot_id": bot_id})
+                                                     "chat_id": chat_id, "bot_id": bot_id, "offset": offset,
+                                                     "limit": limit})
+
+
+# @router.get("/legacy_massage/{massage_id}/")
+# async def legacy_massage():
+
 
 
 @router.get("/verification/")
@@ -58,12 +68,14 @@ async def verification(request: Request):
 
 
 @router.post("/verification_info/")
-async def verification(
-        user_token: Annotated[str | None, Form()] = None):
-    if user_token == "fewrg44ff3rvg343f4gvrrr":
-        content = {"user_token": user_token}
-        response = JSONResponse(content=content)
+async def verification(user_token: Annotated[str | None, Form()] = None):
+    list_tokens: list[str] = []
+    tokens: list[Token] = await Token.all()
+    for token in tokens:
+        list_tokens.append(str(token.token))
+    if user_token in list_tokens:
+        response = RedirectResponse("/messages")
         response.set_cookie(key="user_token", value=user_token)
-        return RedirectResponse("/messages")
+        return response
     else:
         return "Токен неверный"

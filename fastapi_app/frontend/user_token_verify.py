@@ -6,6 +6,8 @@ from fastapi import Cookie, HTTPException, Form
 
 from api.tortoise_models.token_model import Token
 
+from api.tortoise_models.token_model import Token
+
 
 async def validate_user_token(
         user_token: Annotated[str | None, Cookie()] = None

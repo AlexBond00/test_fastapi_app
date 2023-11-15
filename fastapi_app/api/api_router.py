@@ -26,14 +26,11 @@ api_router = APIRouter()
 async def get_bots(
         user_token: Annotated[dict, Depends(validate_user_token)],
         offset: int = __DEFAULT_OFFSET,
-        limit: int = __DEFAULT_LIMIT,
-) -> list[BotModel] | Response:
+        limit: int = __DEFAULT_LIMIT
+) -> list[BotModel]:
     bots: list[BotModel] = await BotModel.all().offset(offset).limit(limit)
 
-    if bots:
-        return bots
-
-    return Response(status_code=HTTPStatus.NOT_FOUND)
+    return bots
 
 
 @api_router.get(
@@ -43,15 +40,16 @@ async def get_dialogue_list(
         bot_id: int,
         offset: int = __DEFAULT_OFFSET,
         limit: int = __DEFAULT_LIMIT
-) -> list[DialogueModel] | Response:
-    dialogues: list[DialogueModel] = await DialogueModel.filter(
-        bot_id=bot_id
-    ).all().offset(offset).limit(limit)
+) -> list[DialogueModel]:
 
-    if dialogues:
-        return dialogues
+    dialogues: list[DialogueModel] = (
+        await DialogueModel.filter(bot_id=bot_id)
+        .all()
+        .offset(offset)
+        .limit(limit)
+    )
 
-    return Response(status_code=HTTPStatus.NOT_FOUND)
+    return dialogues
 
 
 @api_router.get(
@@ -63,16 +61,16 @@ async def get_messages(
         bot_id: int,
         offset: int = __DEFAULT_OFFSET,
         limit: int = __DEFAULT_LIMIT
-) -> list[MessageModel] | Response:
-    messages: list[MessageModel] = await MessageModel.filter(
-        chat_id=chat_id,
-        bot_id=bot_id
-    ).all().offset(offset).limit(limit)
+) -> list[MessageModel]:
 
-    if messages:
-        return messages
+    messages: list[MessageModel] = (
+        await MessageModel.filter(chat_id=chat_id,bot_id=bot_id)
+        .all()
+        .offset(offset)
+        .limit(limit)
+    )
 
-    return Response(status_code=HTTPStatus.NOT_FOUND)
+    return messages
 
 
 @api_router.post("/bots/{bot_id}/dialogues/{chat_id}/sendMessage/")
@@ -82,8 +80,9 @@ async def send_message(
         text: Annotated[str | None, Form()] = None,
         files: Annotated[list[UploadFile], File()] = None,
 ):
-    bot_db = await BotModel.filter(uid=bot_id).first()
-    if not bot_db:
+
+    bot_model = await BotModel.filter(uid=bot_id).first()
+    if not bot_model:
         data = {
             "error_message": f"There is no bot with id {bot_id}"
         }
@@ -91,10 +90,8 @@ async def send_message(
             content=data,
             status_code=HTTPStatus.NOT_FOUND,
         )
-    dialogue = await DialogueModel.get_or_none(
-        chat_id=chat_id,
-        bot_id=bot_id
-    )
+
+    dialogue = await DialogueModel.filter(chat_id=chat_id,bot_id=bot_id).first()
     if not dialogue:
         data = {
             "error_message": f"There is no bot chat with user id {chat_id}"
@@ -103,18 +100,17 @@ async def send_message(
             content=data,
             status_code=HTTPStatus.NOT_FOUND
         )
-    aio_bot = aiogram.Bot(token=bot_db.token)
 
+    aio_bot = aiogram.Bot(token=bot_model.token, parse_mode="HTML")
     try:
         await message_sender(aio_bot, chat_id, text, files)
     except Exception as e:
         logger.log(level=logging.ERROR, msg=e)
 
-    await dialogue.update_from_dict(
-            {"updated_at": datetime.datetime.now(tz=pytz.UTC)}
-        )
+    dialogue.updated_at = datetime.datetime.now(tz=pytz.UTC)
     await dialogue.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")
 
 
 @api_router.post(
@@ -124,30 +120,31 @@ async def delete_message(
         chat_id: int,
         message_id: int
 ):
-    message = await MessageModel.get_or_none(
-        chat_id=chat_id, bot_id=bot_id, message_id=message_id)
+
+    message = await MessageModel.filter(chat_id=chat_id, bot_id=bot_id, message_id=message_id).first()
     if not message:
         data = {
             "error_message": f"There is no such message you want to delete."
         }
         return JSONResponse(content=data, status_code=HTTPStatus.NOT_FOUND)
 
-    bot = await BotModel.filter(uid=bot_id).first()
-    if not bot:
+    bot_model = await BotModel.filter(uid=bot_id).first()
+    if not bot_model:
         data = {
             "error_message": f"There is no such bot with "
                              f"uid {bot_id} in your DB."
         }
         return JSONResponse(content=data, status_code=HTTPStatus.BAD_REQUEST)
 
-    aio_bot = aiogram.Bot(token=bot.token)
+    aio_bot = aiogram.Bot(token=bot_model.token)
     async with aio_bot.context():
         status = await aio_bot.delete_message(
             chat_id=chat_id, message_id=message_id
         )
+
     if not status:
         return Response(status_code=HTTPStatus.BAD_REQUEST)
 
     await message.delete()
-    await message.save()
-    return RedirectResponse(f"/dialog/{bot_id}/{chat_id}")
+
+    return RedirectResponse(f"/dialogues/{bot_id}/{chat_id}")

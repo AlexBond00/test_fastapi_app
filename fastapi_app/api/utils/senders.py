@@ -122,12 +122,13 @@ async def message_sender(
                 text=text
             )
             await save_message(message)
-    # If there are text and files in one request
-    # we try to caption some file or file groups (media group)
-    # with sent text
-    if files:
+
+    else:
+        # If there are text and files in one request
+        # we try to caption some file or file groups (media group)
+        # with sent text
         file_groups = await build_media_groups(files)
-        # EASTER: what does .items() method returns? :)
+
         for group_name, group_values in file_groups.items():
             # if files more than one we try to send them as media group
             if len(group_values) > 1:

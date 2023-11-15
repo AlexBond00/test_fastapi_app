@@ -611,6 +611,14 @@ div[class~="onTop"] > .count {
 	background: #FFF;
 }
 
+.send_message {
+    width: 120px;
+    height: 70px;
+    border: none;
+    background-image: url('static/image/send.png');
+    background-size: cover;
+}
+
 .leftSide {
 	display: inline-block;
 	clear: none;
@@ -964,3 +972,4 @@ div[class~="onTop"] > .count {
 	  pointer-events: auto; /* элемент видим для событий мыши */
     overflow-y: auto; /* добавляем прокрутку по y, когда элемент не помещается на страницу */
 }
+

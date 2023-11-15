@@ -71,8 +71,7 @@ async def main():
             await message_to_edit.save()
 
     bots = [
-        aiogram.Bot(token="6188043261:AAEG6bZ_HJozbLO3ytstwv_Z2Y-nsfCt76o"),
-        aiogram.Bot(token="5889733176:AAHKbaB70yUayTROdGcebwYQWjr3g4a6KYs")
+        aiogram.Bot(token="5542728649:AAG0Jx2b7aqfdfGT3LEASJsQN1zduEUBRAw")
     ]
 
     await dp.start_polling(*bots)
