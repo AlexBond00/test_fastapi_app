@@ -1,9 +1,16 @@
 import logging
 import uuid
+from typing import Type, Union
 
 import aiogram
 from aiogram.exceptions import TelegramBadRequest, TelegramServerError
-from aiogram.types import BufferedInputFile, InputMedia, InputMediaDocument
+from aiogram.types import (
+    BufferedInputFile,
+    InputMediaDocument,
+    InputMediaAudio,
+    InputMediaPhoto,
+    InputMediaVideo
+)
 from fastapi import UploadFile
 
 from .logger import logger
@@ -13,9 +20,10 @@ from ..utils.get_file_type import get_file_type
 from ..utils.message_saver import save_message, bulk_save_message
 
 
-async def get_builder(file: UploadFile):
+async def get_media_object(file: UploadFile
+                           ) -> Type[Union[InputMediaAudio, InputMediaPhoto, InputMediaDocument, InputMediaVideo]]:
     """Get telegram media file builder."""
-    type_ = await get_file_type(file)
+    type_ = get_file_type(file)
     if type_ in __TG_MEDIA_TYPES:
         return __TYPE_ACTIONS.get(type_).get("aio_file_builder")
     return InputMediaDocument
@@ -30,23 +38,24 @@ async def send_media_as_group(
     """Build media group and send it."""
     media_group = []
     for file in group:
-        builder: InputMedia = await get_builder(file)
-        if builder:
-            media_group.append(
-                builder(
-                    media=BufferedInputFile(await file.read(), file.filename),
-                    caption=text
-                )
+        media_object = await get_media_object(file)
+
+        media_group.append(
+            media_object(
+                media=BufferedInputFile(await file.read(), file.filename),
+                caption=text
             )
+        )
         if text:
             # set text to None after usage to not caption each file further
             text = None
+
     async with aio_bot.context():
         messages = await aio_bot.send_media_group(chat_id, media=media_group)
         return messages
 
 
-async def build_media_groups(files: list[UploadFile]) -> dict:
+def build_media_groups(files: list[UploadFile]) -> dict:
     """Media groups builder."""
 
     # Initialized containers to fill with specific media types if exist
@@ -55,7 +64,7 @@ async def build_media_groups(files: list[UploadFile]) -> dict:
     build_media_groups.audio = []
 
     for file in files:
-        actions = await get_type_actions(file)
+        actions = get_type_actions(file)
         # get container name from config that depends on file content type
         container_name = actions.get("container")
         # get container set above
@@ -65,9 +74,9 @@ async def build_media_groups(files: list[UploadFile]) -> dict:
     return vars(build_media_groups)
 
 
-async def get_type_actions(file: UploadFile) -> dict:
+def get_type_actions(file: UploadFile) -> dict:
     """Get action depends on content type."""
-    _type = await get_file_type(file)
+    _type = get_file_type(file)
     actions = __TYPE_ACTIONS.get(_type)
     if actions:
         return actions
@@ -86,7 +95,7 @@ async def send_according_to_message_type(
     salt = uuid.uuid4().hex
     content = await file.read()
     filename = salt + "_" + file.filename
-    content_type = await get_file_type(file)
+    content_type = get_file_type(file)
     message = await getattr(aio_bot, method)(
         chat_id,
         BufferedInputFile(content, filename),
@@ -104,7 +113,7 @@ async def file_sender(
         text: str | None
 ):
     """Matches file types to tg send methods."""
-    actions = await get_type_actions(file)
+    actions = get_type_actions(file)
     try:
         method = actions.get("method")
     except AttributeError as e:
@@ -144,7 +153,7 @@ async def message_sender(
                 logger.log(level=logging.ERROR, msg=e)
         # if there are more than one file we try to send them as media group
         else:
-            file_groups = await build_media_groups(files)
+            file_groups = build_media_groups(files)
 
             for group_name, group_values in file_groups.items():
                 try:

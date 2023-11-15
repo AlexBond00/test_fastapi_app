@@ -39,7 +39,7 @@ async def bulk_save_file(
         salt = uuid.uuid4().hex
         content = await file.read()
         filename = salt + "_" + file.filename
-        content_type = await get_file_type(file)
+        content_type = get_file_type(file)
         await save_file(
             content, filename, message, content_type
         )
