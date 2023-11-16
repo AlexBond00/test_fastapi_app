@@ -28,9 +28,8 @@ async def get_bots(
         offset: int = __DEFAULT_OFFSET,
         limit: int = __DEFAULT_LIMIT
 ) -> list[BotModel]:
-    await Token.create()
 
-    bots: list[BotModel] = await BotModel.all().offset(offset).limit(limit)
+    bots: list[BotModel] = await BotModel.all()
 
     return bots
 
@@ -44,12 +43,7 @@ async def get_dialogue_list(
         limit: int = __DEFAULT_LIMIT
 ) -> list[DialogueModel]:
 
-    dialogues: list[DialogueModel] = (
-        await DialogueModel.filter(bot_id=bot_id)
-        .all()
-        .offset(offset)
-        .limit(limit)
-    )
+    dialogues: list[DialogueModel] = await DialogueModel.filter(bot_id=bot_id).all()
 
     return dialogues
 
@@ -65,12 +59,7 @@ async def get_messages(
         limit: int = __DEFAULT_LIMIT
 ) -> list[MessageModel]:
 
-    messages: list[MessageModel] = (
-        await MessageModel.filter(chat_id=chat_id,bot_id=bot_id)
-        .all()
-        .offset(offset)
-        .limit(limit)
-    )
+    messages: list[MessageModel] = await MessageModel.filter(chat_id=chat_id,bot_id=bot_id).all()
 
     return messages
 
