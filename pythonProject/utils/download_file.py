@@ -16,6 +16,7 @@ async def download_file(event: Message, db_message: MessageModel) -> None:
     """Download file from tg server."""
     # Possible attributes in event(Message) instance
     attrs = ["document", "photo", "audio", "video"]
+    print(event)
 
     for attr in attrs:
         # Check if message has files or not
@@ -51,6 +52,7 @@ async def save_file_in_db(
         content_type: str
 ) -> None:
     """Save file in DB."""
+    # TODO: add name of root in some config or get it not that explicitly
     path = path.split("fastapi_app/")[-1]
     await FileModel.create(
         path=path,

@@ -37,9 +37,12 @@ async def bulk_save_file(
     # TODO: same code in senders.send_according...
     for message, file in mapped_files.items():
         salt = uuid.uuid4().hex
+        await file.seek(0)
         content = await file.read()
         filename = salt + "_" + file.filename
-        content_type = await get_file_type(file)
+        content_type = get_file_type(file)
+        if content:
+            print("content is")
         await save_file(
             content, filename, message, content_type
         )

@@ -2,19 +2,19 @@ import datetime
 import logging
 from http import HTTPStatus
 from typing import Annotated
-from .tortoise_models.token_model import Token
+
 import aiogram
 import pytz
-from fastapi import Depends, File, Form, UploadFile
+from fastapi import File, Form, UploadFile
 from fastapi.responses import Response, RedirectResponse, JSONResponse
 from fastapi.routing import APIRouter
 
-from frontend.user_token_verify import validate_user_token
 from .config import __DEFAULT_LIMIT, __DEFAULT_OFFSET
 from .pydantic_models import Dialogue, Message, Bot
 from .tortoise_models.bot_model import BotModel
 from .tortoise_models.dialogue_model import DialogueModel
 from .tortoise_models.message_model import MessageModel
+from .tortoise_models.token_model import Token
 from .utils.logger import logger
 from .utils.senders import message_sender
 

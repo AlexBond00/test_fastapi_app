@@ -19,4 +19,4 @@ class MessageModel(Model):
 
     class Meta:
         table = "message"
-        ordering = ['created_at']
+        ordering = ['-created_at']
